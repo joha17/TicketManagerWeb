@@ -1,0 +1,59 @@
+﻿@model IEnumerable<UE_ManagerWebApp.Models.Departments>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Departments</h1>
+
+<p>
+    <a class="btn btn-success" type="button"asp-action="Create" role="button">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Creation_Date)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Create_User)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Update_Date)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Update_User)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Creation_Date)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Create_User)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Update_Date)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Update_User)
+            </td>
+            <td>
+                <a class="btn btn-warning" type="button" asp-action="Edit" asp-route-id="@item.Id" role="button">Edit</a>
+                <a class="btn btn-info" type="button" asp-action="Details" asp-route-id="@item.Id" role="button">Details</a>
+                <a class="btn btn-danger" type="button" asp-action="Delete" asp-route-id="@item.Id" role="button">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

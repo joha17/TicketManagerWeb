@@ -1,0 +1,101 @@
+﻿@model UE_ManagerWebApp.Paged.PaginatedList<UE_ManagerWebApp.Models.Applications>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Aplicaciones</h1>
+
+<p>
+    <a class="btn btn-success" type="button" asp-action="Create" role="button">Nuevo</a>
+</p>
+<form asp-action="Index" method="get">
+    <div class="form-row align-items-center">
+        <div class="col-auto">
+            <label class="sr-only" for="inlineFormInput">Name</label>
+            <input type="text" class="form-control" id="inlineFormInput" name="SearchString" value="@ViewData["currentFilter"]" placeholder="Nombre o Codigo">
+        </div>
+        <div class="col-auto">
+            <button type="submit" value="Search" class="btn btn-primary">Buscar</button>
+        </div>
+        <div class="col-auto">
+            <a asp-action="Index" class="btn btn-info">Lista completa</a>
+        </div>
+    </div>
+</form>
+<br />
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["NameSortParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">Nombre</a>
+            </th>
+            <th>
+                Tipo de aplicación
+            </th>
+            <th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["NameSortParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">Fecha de Creación</a>
+            </th>
+            <th>
+                Usuario de Creación
+            </th>
+            <th>
+                Fecha de Actualización
+            </th>
+            <th>
+                Usuario de Actualización
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ApplicationName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ApplicationType)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CreationDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CreationUser)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UpdateDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UpdateUser)
+                </td>
+                <td>
+                    <a class="btn btn-warning" type="button" asp-action="Edit" asp-route-id="@item.Id" role="button">Edit</a>
+                    <a class="btn btn-info" type="button" asp-action="Details" asp-route-id="@item.Id" role="button">Details</a>
+                    <a class="btn btn-danger" type="button" asp-action="Delete" asp-route-id="@item.Id" role="button">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@{
+    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+}
+
+<a asp-action="Index"
+   asp-route-sortOrder="@ViewData["CurrentSort"]"
+   asp-route-pageNumber="@(Model.PageIndex - 1)"
+   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+   class="btn btn-dark @prevDisabled">
+    Anterior
+</a>
+<a asp-action="Index"
+   asp-route-sortOrder="@ViewData["CurrentSort"]"
+   asp-route-pageNumber="@(Model.PageIndex + 1)"
+   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+   class="btn btn-dark @nextDisabled">
+    Siguiente
+</a>

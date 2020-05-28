@@ -1,0 +1,28 @@
+﻿@model UE_ManagerWebApp.Models.Users
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Login";
+}
+<h2>Login</h2>
+
+<strong>@ViewBag.Message</strong>
+<form asp-controller="Authentication" asp-action="LoginUser" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div>
+        <label asp-for="Username"></label>
+        <input class="form-control" asp-for="Username" />
+        <span asp-validation-for="Username"></span>
+    </div>
+
+    <div>
+        <label asp-for="Password"></label>
+        <input type="password" class="form-control" asp-for="Password" />
+        <span asp-validation-for="Password"></span>
+    </div>
+    <br />
+    <button class="btn btn-primary" type="submit" value="LoginUser">
+        Iniciar sesión
+    </button>
+</form> 

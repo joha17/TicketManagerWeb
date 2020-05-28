@@ -1,0 +1,36 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="/docs/4.1/assets/img/favicons/favicon.ico">
+    <title>@ViewData["Title"] - UE_ManagerWebApp</title>
+    <link rel="stylesheet" href="~/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/sticky-footer.css" />
+    <link rel="stylesheet" href="~/css/dashboard.css" />
+</head>
+<body>
+    <partial name="_LoginPartial.cshtml" />
+    <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+            <div class="btn-toolbar mb-2 mb-md-0">
+                <div class="container-fluid">
+                    @RenderBody()
+                </div>
+
+            </div>
+        </div>
+        
+        </main>
+
+        <footer class="footer">
+            <div class="container">
+                <span class="text-muted">UET Ultra App.</span>
+            </div>
+        </footer>
+        <script src="~/lib/jquery/dist/jquery.min.js"></script>
+        <script src="~/js/bootstrap.min.js"></script>
+        @*<script src="~/js/site.js" asp-append-version="true"></script>*@
+        @RenderSection("Scripts", required: false)
+</body>
+</html>
