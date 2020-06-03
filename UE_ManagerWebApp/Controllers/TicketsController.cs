@@ -22,7 +22,6 @@ namespace UE_ManagerWebApp.Controllers
         }
 
         // GET: Tickets
-        [Authorize(Roles.ADMIN,Roles.ANALYST)]
         public async Task<IActionResult> Index(string sortOrder, string currentFilter, string searchString, int? pageNumber)
         {
             

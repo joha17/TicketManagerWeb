@@ -21,6 +21,7 @@ namespace UE_ManagerWebApp.Controllers
         }
 
         // GET: Applications
+        [Microsoft.AspNetCore.Authorization.Authorize(Policy = "IsAdmin")]
         public async Task<IActionResult> Index(string sortOrder, string currentFilter, string searchString, int? pageNumber)
         {
             ViewData["CurrentSort"] = sortOrder;
@@ -63,6 +64,7 @@ namespace UE_ManagerWebApp.Controllers
         }
 
         // GET: Applications/Details/5
+        [Microsoft.AspNetCore.Authorization.Authorize(Policy = "IsAdmin")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -81,6 +83,7 @@ namespace UE_ManagerWebApp.Controllers
         }
 
         // GET: Applications/Create
+        [Microsoft.AspNetCore.Authorization.Authorize(Policy = "IsAdmin")]
         public IActionResult Create()
         {
             try
@@ -99,6 +102,7 @@ namespace UE_ManagerWebApp.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [Microsoft.AspNetCore.Authorization.Authorize(Policy = "IsAdmin")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,ApplicationName,ApplicationType,CreationDate,CreationUser,UpdateDate,UpdateUser,DepartmentId")] Applications applications)
         {
@@ -114,6 +118,7 @@ namespace UE_ManagerWebApp.Controllers
         }
 
         // GET: Applications/Edit/5
+        [Microsoft.AspNetCore.Authorization.Authorize(Policy = "IsAdmin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -134,6 +139,7 @@ namespace UE_ManagerWebApp.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [Microsoft.AspNetCore.Authorization.Authorize(Policy = "IsAdmin")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,ApplicationName,ApplicationType,CreationDate,CreationUser,UpdateDate,UpdateUser")] Applications applications)
         {
@@ -169,6 +175,7 @@ namespace UE_ManagerWebApp.Controllers
         }
 
         // GET: Applications/Delete/5
+        [Microsoft.AspNetCore.Authorization.Authorize(Policy = "IsAdmin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -188,6 +195,7 @@ namespace UE_ManagerWebApp.Controllers
 
         // POST: Applications/Delete/5
         [HttpPost, ActionName("Delete")]
+        [Microsoft.AspNetCore.Authorization.Authorize(Policy = "IsAdmin")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {

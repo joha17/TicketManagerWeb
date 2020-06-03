@@ -46,6 +46,11 @@ namespace UE_ManagerWebApp.Controllers
             {
                 HttpContext.Session.SetString("JWToken", userToken);
                 ViewBag.Message = "Welcome!";
+                
+                SetRole _setRole = new SetRole();
+
+                TempData["UserRole"] = _setRole.setRole(dbUser.AccessLevel.ToString());
+               
                 return Redirect("~/Home/Index");
                 //return View("Views/Home/Index.cshtml");
             }
@@ -62,6 +67,34 @@ namespace UE_ManagerWebApp.Controllers
         {
             ViewBag.UserRole = GetRole();
             return View("NoPermission");
+        }
+
+        private string setRole(string accessLevel) 
+        {
+            try
+            {
+                if (accessLevel.Equals("ADMIN"))
+                {
+                    return "ADMIN";
+                }
+                if (accessLevel.Equals("SUPERVISOR"))
+                {
+                    return "SUPERVISOR";
+                }
+                if (accessLevel.Equals("LEAD"))
+                {
+                    return "LEAD";
+                }
+                else
+                {
+                    return "ANALYST";
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
 
 

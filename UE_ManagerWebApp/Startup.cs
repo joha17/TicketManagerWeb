@@ -10,6 +10,9 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.Http;
+using UE_ManagerWebApp.CustomAttributes;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
 namespace UE_ManagerWebApp
 {
@@ -25,10 +28,11 @@ namespace UE_ManagerWebApp
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
+            services.AddMvc(options => options.EnableEndpointRouting = false);
             services.AddSession(options => {
-                options.IdleTimeout = TimeSpan.FromMinutes(60);
+                options.IdleTimeout = TimeSpan.FromMinutes(120);
             });
+            services.AddSingleton<ITempDataProvider, CookieTempDataProvider>();
 
             services.AddDbContext<UEManagerDBContext>(options =>
                     options.UseSqlServer(Configuration.GetConnectionString("UETDBConn")));
@@ -36,7 +40,18 @@ namespace UE_ManagerWebApp
             services.AddDbContext<AuthDBContext>(options =>
                     options.UseSqlServer(Configuration.GetConnectionString("AuthDBConn")));
 
-            services.AddMvc(options => options.EnableEndpointRouting = false);
+            //services.AddSingleton<IAuthorizationHandler, RoleRequirement>();
+
+            services.AddSingleton<IAuthorizationHandler, RoleHandler>();
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("IsAdmin",
+                    policy => policy.RequireClaim("AccessLevel")
+                    .AddRequirements(new RoleRequirement("")));
+            });
+
+            
 
 
             //Provide a secret key to Encrypt and Decrypt the Token - JRozario
@@ -66,11 +81,6 @@ namespace UE_ManagerWebApp
                     ValidateLifetime = true,
                     ClockSkew = TimeSpan.Zero
                 };
-            });
-            services.AddAuthorization(options =>
-            {
-                options.AddPolicy("TrainedStaffOnly",
-                    policy => policy.RequireClaim("AccessLevel"));
             });
 
         }

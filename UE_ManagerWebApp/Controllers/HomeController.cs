@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using UE_ManagerWebApp.CustomAttributes;
 using UE_ManagerWebApp.Models;
 
 namespace UE_ManagerWebApp.Controllers
@@ -20,6 +21,11 @@ namespace UE_ManagerWebApp.Controllers
 
         public IActionResult Index()
         {
+            string role;
+            if (TempData["UserRole"] != null)
+                role = TempData["UserRole"] as string;
+
+            TempData.Keep();
             return View();
         }
 

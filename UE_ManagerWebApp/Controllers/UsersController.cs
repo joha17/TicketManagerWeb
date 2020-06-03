@@ -2,29 +2,25 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using UE_ManagerWebApp.CustomAttributes;
 using UE_ManagerWebApp.Entity;
 using UE_ManagerWebApp.Models;
-using UE_ManagerWebApp.Paged;
 
 namespace UE_ManagerWebApp.Controllers
 {
-    public class CustomersController : Controller
+    public class UsersController : Controller
     {
-        private readonly UEManagerDBContext _context;
+        private readonly AuthDBContext _context;
 
-        public CustomersController(UEManagerDBContext context)
+        public UsersController(AuthDBContext context)
         {
             _context = context;
         }
 
-        // GET: Customers
-        [Microsoft.AspNetCore.Authorization.Authorize(Policy = "IsAdmin")]
-        public async Task<IActionResult> Index(string sortOrder, string currentFilter, string searchString, int? pageNumber)
+        // GET: Users
+        public async Task<IActionResult> Index()
         {
             try
             {
@@ -33,45 +29,7 @@ namespace UE_ManagerWebApp.Controllers
                     role = TempData["UserRole"] as string;
 
                 TempData.Keep();
-                ViewData["CurrentSort"] = sortOrder;
-                ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
-                ViewData["DateSortParm"] = sortOrder == "Date" ? "date_desc" : "Date";
-
-                if (searchString != null)
-                {
-                    pageNumber = 1;
-                }
-                else
-                {
-                    searchString = currentFilter;
-                }
-
-                ViewData["CurrentFilter"] = searchString;
-
-                var customers = from s in _context.Customers
-                                select s;
-                if (!String.IsNullOrEmpty(searchString))
-                {
-                    customers = customers.Where(s => s.CustomerName.Contains(searchString)
-                                           || s.CustomerCode.Contains(searchString));
-                }
-                switch (sortOrder)
-                {
-                    case "name_desc":
-                        customers = customers.OrderByDescending(s => s.CustomerName);
-                        break;
-                    case "Date":
-                        customers = customers.OrderBy(s => s.CreationDate);
-                        break;
-                    case "date_desc":
-                        customers = customers.OrderByDescending(s => s.CreationDate);
-                        break;
-                    default:
-                        customers = customers.OrderBy(s => s.CustomerName);
-                        break;
-                }
-                int pageSize = 10;
-                return View(await PaginatedList<Customers>.CreateAsync(customers.AsNoTracking(), pageNumber ?? 1, pageSize));
+                return View(await _context.Users.ToListAsync());
             }
             catch (Exception)
             {
@@ -81,30 +39,30 @@ namespace UE_ManagerWebApp.Controllers
             
         }
 
-        // GET: Customers/Details/5
-        [Microsoft.AspNetCore.Authorization.Authorize(Policy = "IsAdmin")]
+        // GET: Users/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-
             try
             {
                 string role;
                 if (TempData["UserRole"] != null)
                     role = TempData["UserRole"] as string;
+
+                TempData.Keep();
 
                 if (id == null)
                 {
                     return NotFound();
                 }
 
-                var customers = await _context.Customers
+                var users = await _context.Users
                     .FirstOrDefaultAsync(m => m.Id == id);
-                if (customers == null)
+                if (users == null)
                 {
                     return NotFound();
                 }
 
-                return View(customers);
+                return View(users);
             }
             catch (Exception)
             {
@@ -114,15 +72,16 @@ namespace UE_ManagerWebApp.Controllers
             
         }
 
-        // GET: Customers/Create
-        [Microsoft.AspNetCore.Authorization.Authorize(Policy = "IsAdmin")]
-        public IActionResult Create() 
+        // GET: Users/Create
+        public IActionResult Create()
         {
             try
             {
                 string role;
                 if (TempData["UserRole"] != null)
                     role = TempData["UserRole"] as string;
+
+                TempData.Keep();
                 return View();
             }
             catch (Exception)
@@ -133,12 +92,12 @@ namespace UE_ManagerWebApp.Controllers
             
         }
 
-        // POST: Customers/Create
+        // POST: Users/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,CustomerCode,CustomerName,Status,IssuerAdquier,CreationDate,CreationUser,UpdateDate,UpdateUser,CountryCode,Wallet")] Customers customers)
+        public async Task<IActionResult> Create([Bind("Id,Username,Password,FirstName,LastName,EmailID,AccessLevel,ReadOnly")] Users users)
         {
             try
             {
@@ -146,13 +105,16 @@ namespace UE_ManagerWebApp.Controllers
                 if (TempData["UserRole"] != null)
                     role = TempData["UserRole"] as string;
 
+                TempData.Keep();
+
                 if (ModelState.IsValid)
                 {
-                    _context.Add(customers);
+                    users.Password = MD5.MD5Crypto.Encrypt(users.Password);
+                    _context.Add(users);
                     await _context.SaveChangesAsync();
                     return RedirectToAction(nameof(Index));
                 }
-                return View(customers);
+                return View(users);
             }
             catch (Exception)
             {
@@ -162,8 +124,7 @@ namespace UE_ManagerWebApp.Controllers
             
         }
 
-        // GET: Customers/Edit/5
-        [Microsoft.AspNetCore.Authorization.Authorize(Policy = "IsAdmin")]
+        // GET: Users/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             try
@@ -172,17 +133,19 @@ namespace UE_ManagerWebApp.Controllers
                 if (TempData["UserRole"] != null)
                     role = TempData["UserRole"] as string;
 
+                TempData.Keep();
+
                 if (id == null)
                 {
                     return NotFound();
                 }
 
-                var customers = await _context.Customers.FindAsync(id);
-                if (customers == null)
+                var users = await _context.Users.FindAsync(id);
+                if (users == null)
                 {
                     return NotFound();
                 }
-                return View(customers);
+                return View(users);
             }
             catch (Exception)
             {
@@ -192,13 +155,12 @@ namespace UE_ManagerWebApp.Controllers
             
         }
 
-        // POST: Customers/Edit/5
+        // POST: Users/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [Microsoft.AspNetCore.Authorization.Authorize(Policy = "IsAdmin")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,CustomerCode,CustomerName,Status,IssuerAdquier,CreationDate,CreationUser,UpdateDate,UpdateUser,CountryCode,Wallet")] Customers customers)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Username,Password,FirstName,LastName,EmailID,AccessLevel,ReadOnly")] Users users)
         {
             try
             {
@@ -206,7 +168,9 @@ namespace UE_ManagerWebApp.Controllers
                 if (TempData["UserRole"] != null)
                     role = TempData["UserRole"] as string;
 
-                if (id != customers.Id)
+                TempData.Keep();
+
+                if (id != users.Id)
                 {
                     return NotFound();
                 }
@@ -215,12 +179,13 @@ namespace UE_ManagerWebApp.Controllers
                 {
                     try
                     {
-                        _context.Update(customers);
+                        users.Password = MD5.MD5Crypto.Encrypt(users.Password);
+                        _context.Update(users);
                         await _context.SaveChangesAsync();
                     }
                     catch (DbUpdateConcurrencyException)
                     {
-                        if (!CustomersExists(customers.Id))
+                        if (!UsersExists(users.Id))
                         {
                             return NotFound();
                         }
@@ -231,7 +196,7 @@ namespace UE_ManagerWebApp.Controllers
                     }
                     return RedirectToAction(nameof(Index));
                 }
-                return View(customers);
+                return View(users);
             }
             catch (Exception)
             {
@@ -241,7 +206,7 @@ namespace UE_ManagerWebApp.Controllers
             
         }
 
-        // GET: Customers/Delete/5
+        // GET: Users/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             try
@@ -249,6 +214,22 @@ namespace UE_ManagerWebApp.Controllers
                 string role;
                 if (TempData["UserRole"] != null)
                     role = TempData["UserRole"] as string;
+
+                TempData.Keep();
+
+                if (id == null)
+                {
+                    return NotFound();
+                }
+
+                var users = await _context.Users
+                    .FirstOrDefaultAsync(m => m.Id == id);
+                if (users == null)
+                {
+                    return NotFound();
+                }
+
+                return View(users);
             }
             catch (Exception)
             {
@@ -258,9 +239,8 @@ namespace UE_ManagerWebApp.Controllers
             
         }
 
-        // POST: Customers/Delete/5
+        // POST: Users/Delete/5
         [HttpPost, ActionName("Delete")]
-        [Microsoft.AspNetCore.Authorization.Authorize(Policy = "IsAdmin")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
@@ -270,8 +250,10 @@ namespace UE_ManagerWebApp.Controllers
                 if (TempData["UserRole"] != null)
                     role = TempData["UserRole"] as string;
 
-                var customers = await _context.Customers.FindAsync(id);
-                _context.Customers.Remove(customers);
+                TempData.Keep();
+
+                var users = await _context.Users.FindAsync(id);
+                _context.Users.Remove(users);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
@@ -280,13 +262,12 @@ namespace UE_ManagerWebApp.Controllers
 
                 throw;
             }
+            
         }
 
-        
-
-        private bool CustomersExists(int id)
+        private bool UsersExists(int id)
         {
-            return _context.Customers.Any(e => e.Id == id);
+            return _context.Users.Any(e => e.Id == id);
         }
     }
 }

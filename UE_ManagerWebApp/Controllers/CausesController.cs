@@ -20,129 +20,254 @@ namespace UE_ManagerWebApp.Controllers
         }
 
         // GET: Causes
+        [Microsoft.AspNetCore.Authorization.Authorize(Policy = "IsAdmin")]
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Causes.ToListAsync());
+            try
+            {
+                string role;
+                if (TempData["UserRole"] != null)
+                    role = TempData["UserRole"] as string;
+
+                TempData.Keep();
+                return View(await _context.Causes.ToListAsync());
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            
         }
 
         // GET: Causes/Details/5
+        [Microsoft.AspNetCore.Authorization.Authorize(Policy = "IsAdmin")]
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
+            try
             {
-                return NotFound();
-            }
+                string role;
+                if (TempData["UserRole"] != null)
+                    role = TempData["UserRole"] as string;
 
-            var causes = await _context.Causes
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (causes == null)
+                TempData.Keep();
+
+                if (id == null)
+                {
+                    return NotFound();
+                }
+
+                var causes = await _context.Causes
+                    .FirstOrDefaultAsync(m => m.Id == id);
+                if (causes == null)
+                {
+                    return NotFound();
+                }
+
+                return View(causes);
+            }
+            catch (Exception)
             {
-                return NotFound();
-            }
 
-            return View(causes);
+                throw;
+            }
+            
         }
 
         // GET: Causes/Create
+        [Microsoft.AspNetCore.Authorization.Authorize(Policy = "IsAdmin")]
         public IActionResult Create()
         {
-            return View();
+            try
+            {
+                string role;
+                if (TempData["UserRole"] != null)
+                    role = TempData["UserRole"] as string;
+
+                TempData.Keep();
+                return View();
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            
         }
 
         // POST: Causes/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [Microsoft.AspNetCore.Authorization.Authorize(Policy = "IsAdmin")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Description,CreationDate,CreationUser,UpdateDate,UpdateUser")] Causes causes)
         {
-            if (ModelState.IsValid)
+            try
             {
-                _context.Add(causes);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                string role;
+                if (TempData["UserRole"] != null)
+                    role = TempData["UserRole"] as string;
+
+                TempData.Keep();
+
+                if (ModelState.IsValid)
+                {
+                    _context.Add(causes);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+                return View(causes);
             }
-            return View(causes);
+            catch (Exception)
+            {
+
+                throw;
+            }
+            
         }
 
         // GET: Causes/Edit/5
+        [Microsoft.AspNetCore.Authorization.Authorize(Policy = "IsAdmin")]
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
+            try
             {
-                return NotFound();
-            }
+                string role;
+                if (TempData["UserRole"] != null)
+                    role = TempData["UserRole"] as string;
 
-            var causes = await _context.Causes.FindAsync(id);
-            if (causes == null)
-            {
-                return NotFound();
+                TempData.Keep();
+
+                if (id == null)
+                {
+                    return NotFound();
+                }
+
+                var causes = await _context.Causes.FindAsync(id);
+                if (causes == null)
+                {
+                    return NotFound();
+                }
+                return View(causes);
             }
-            return View(causes);
+            catch (Exception)
+            {
+
+                throw;
+            }
+            
         }
 
         // POST: Causes/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [Microsoft.AspNetCore.Authorization.Authorize(Policy = "IsAdmin")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Description,CreationDate,CreationUser,UpdateDate,UpdateUser")] Causes causes)
         {
-            if (id != causes.Id)
+            try
             {
-                return NotFound();
-            }
+                string role;
+                if (TempData["UserRole"] != null)
+                    role = TempData["UserRole"] as string;
 
-            if (ModelState.IsValid)
-            {
-                try
+                TempData.Keep();
+
+                if (id != causes.Id)
                 {
-                    _context.Update(causes);
-                    await _context.SaveChangesAsync();
+                    return NotFound();
                 }
-                catch (DbUpdateConcurrencyException)
+
+                if (ModelState.IsValid)
                 {
-                    if (!CausesExists(causes.Id))
+                    try
                     {
-                        return NotFound();
+                        _context.Update(causes);
+                        await _context.SaveChangesAsync();
                     }
-                    else
+                    catch (DbUpdateConcurrencyException)
                     {
-                        throw;
+                        if (!CausesExists(causes.Id))
+                        {
+                            return NotFound();
+                        }
+                        else
+                        {
+                            throw;
+                        }
                     }
+                    return RedirectToAction(nameof(Index));
                 }
-                return RedirectToAction(nameof(Index));
+                return View(causes);
             }
-            return View(causes);
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
 
         // GET: Causes/Delete/5
+        [Microsoft.AspNetCore.Authorization.Authorize(Policy = "IsAdmin")]
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
+            try
             {
-                return NotFound();
-            }
+                string role;
+                if (TempData["UserRole"] != null)
+                    role = TempData["UserRole"] as string;
 
-            var causes = await _context.Causes
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (causes == null)
+                TempData.Keep();
+
+                if (id == null)
+                {
+                    return NotFound();
+                }
+
+                var causes = await _context.Causes
+                    .FirstOrDefaultAsync(m => m.Id == id);
+                if (causes == null)
+                {
+                    return NotFound();
+                }
+
+                return View(causes);
+            }
+            catch (Exception)
             {
-                return NotFound();
-            }
 
-            return View(causes);
+                throw;
+            }
+            
         }
 
         // POST: Causes/Delete/5
         [HttpPost, ActionName("Delete")]
+        [Microsoft.AspNetCore.Authorization.Authorize(Policy = "IsAdmin")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var causes = await _context.Causes.FindAsync(id);
-            _context.Causes.Remove(causes);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            try
+            {
+                string role;
+                if (TempData["UserRole"] != null)
+                    role = TempData["UserRole"] as string;
+
+                TempData.Keep();
+
+                var causes = await _context.Causes.FindAsync(id);
+                _context.Causes.Remove(causes);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            
         }
 
         private bool CausesExists(int id)

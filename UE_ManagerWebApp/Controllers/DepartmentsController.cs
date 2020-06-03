@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using UE_ManagerWebApp.CustomAttributes;
@@ -21,7 +23,7 @@ namespace UE_ManagerWebApp.Controllers
         }
 
         // GET: Departments
-        [Authorize(Roles.ADMIN)]
+        [Microsoft.AspNetCore.Authorization.Authorize(Policy = "IsAdmin")]
         public async Task<IActionResult> Index()
         {
             try
@@ -38,6 +40,7 @@ namespace UE_ManagerWebApp.Controllers
         }
 
         // GET: Departments/Details/5
+        [Microsoft.AspNetCore.Authorization.Authorize(Policy = "IsAdmin")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -56,6 +59,7 @@ namespace UE_ManagerWebApp.Controllers
         }
 
         // GET: Departments/Create
+        [Microsoft.AspNetCore.Authorization.Authorize(Policy = "IsAdmin")]
         public IActionResult Create()
         {
             return View();
@@ -65,6 +69,7 @@ namespace UE_ManagerWebApp.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [Microsoft.AspNetCore.Authorization.Authorize(Policy = "IsAdmin")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,Creation_Date,Create_User,Update_Date,Update_User")] Departments departments)
         {
@@ -78,6 +83,7 @@ namespace UE_ManagerWebApp.Controllers
         }
 
         // GET: Departments/Edit/5
+        [Microsoft.AspNetCore.Authorization.Authorize(Policy = "IsAdmin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -97,6 +103,7 @@ namespace UE_ManagerWebApp.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [Microsoft.AspNetCore.Authorization.Authorize(Policy = "IsAdmin")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Creation_Date,Create_User,Update_Date,Update_User")] Departments departments)
         {
@@ -148,6 +155,7 @@ namespace UE_ManagerWebApp.Controllers
 
         // POST: Departments/Delete/5
         [HttpPost, ActionName("Delete")]
+        [Microsoft.AspNetCore.Authorization.Authorize(Policy = "IsAdmin")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {

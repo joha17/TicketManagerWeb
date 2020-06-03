@@ -21,15 +21,11 @@ namespace UE_ManagerWebApp.Services
             {
                 if (user == null)
                     return null;
-
-                if (password == user.Password && username == user.Username)
+                string decriptPass = MD5.MD5Crypto.Decrypt(user.Password);
+                if (password == decriptPass && username == user.Username)
                 {
-                    //user.AccessLevel = Roles.ADMIN.ToString();
-                    //Authentication successful, Issue Token with user credentials
-                    //Provide the security key which was given in the JWToken configuration in Startup.cs
                     var key = Encoding.ASCII.GetBytes
                               ("YourKey-2374-OFFKDI940NG7:56753253-tyuw-5769-0921-kfirox29zoxv");
-                    //Generate Token for user 
                     var JWToken = new JwtSecurityToken(
                         issuer: "http://localhost:44327/",
                         audience: "http://localhost:44327/",
