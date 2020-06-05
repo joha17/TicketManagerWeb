@@ -15,7 +15,6 @@ namespace UE_ManagerWebApp.Models
         public string LastName { get; set; }
         public string EmailID { get; set; }
         public string AccessLevel { get; set; }
-        public string ReadOnly { get; set; }
 
     }
 }

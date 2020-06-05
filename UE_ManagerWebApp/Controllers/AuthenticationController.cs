@@ -28,45 +28,85 @@ namespace UE_ManagerWebApp.Controllers
 
         public IActionResult LoginUser()
         {
-            return View();
+            try
+            {
+                return View();
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            
         }
 
         [HttpPost]
         public async Task<IActionResult> LoginUser(Users login)
         {
-            var dbUser = await _context
+            try
+            {
+                var dbUser = await _context
                     .Users
                     .SingleOrDefaultAsync(u => u.Username == login.Username);
 
-            var userr = _context.Users.SingleOrDefault(x => x.Username == "jcervantes");
+                var userr = _context.Users.SingleOrDefault(x => x.Username == "jcervantes");
 
-            TokenProvider _tokenProvider = new TokenProvider();
-            var userToken = _tokenProvider.LoginUser(login.Username.Trim(), login.Password.Trim(), dbUser);
-            if (userToken != null)
-            {
-                HttpContext.Session.SetString("JWToken", userToken);
-                ViewBag.Message = "Welcome!";
-                
-                SetRole _setRole = new SetRole();
+                TokenProvider _tokenProvider = new TokenProvider();
+                var userToken = _tokenProvider.LoginUser(login.Username.Trim(), login.Password.Trim(), dbUser);
+                if (userToken != null)
+                {
+                    HttpContext.Session.SetString("JWToken", userToken);
+                    ViewBag.Message = "Welcome!";
 
-                TempData["UserRole"] = _setRole.setRole(dbUser.AccessLevel.ToString());
-               
-                return Redirect("~/Home/Index");
-                //return View("Views/Home/Index.cshtml");
+                    SetRole _setRole = new SetRole();
+
+                    TempData["UserRole"] = _setRole.setRole(dbUser.AccessLevel.ToString());
+
+                    return Redirect("~/Tickets/Index");
+                    //return View("Views/Home/Index.cshtml");
+                }
+                ViewBag.Message = "User logged in bad!";
+                return View();
             }
-            ViewBag.Message = "User logged in bad!";
-            return View();
+            catch (Exception)
+            {
+
+                throw;
+            }
+            
         }
 
         public IActionResult Logoff()
         {
-            HttpContext.Session.Clear();
-            return Redirect("LoginUser");
+            try
+            {
+                HttpContext.Session.Clear();
+                return Redirect("LoginUser");
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            
         }
         public IActionResult NoPermission()
         {
-            ViewBag.UserRole = GetRole();
-            return View("NoPermission");
+            try
+            {
+                string role;
+                if (TempData["UserRole"] != null)
+                    role = TempData["UserRole"] as string;
+                TempData.Keep();
+
+                ViewBag.UserRole = GetRole();
+                return View("NoPermission");
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
 
         private string setRole(string accessLevel) 

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using UE_ManagerWebApp.CustomAttributes;
 using UE_ManagerWebApp.Entity;
 using UE_ManagerWebApp.Models;
 
@@ -20,6 +21,7 @@ namespace UE_ManagerWebApp.Controllers
         }
 
         // GET: Users
+        [Authorize]
         public async Task<IActionResult> Index()
         {
             try
@@ -40,6 +42,7 @@ namespace UE_ManagerWebApp.Controllers
         }
 
         // GET: Users/Details/5
+        [Authorize]
         public async Task<IActionResult> Details(int? id)
         {
             try
@@ -73,6 +76,7 @@ namespace UE_ManagerWebApp.Controllers
         }
 
         // GET: Users/Create
+        [Authorize]
         public IActionResult Create()
         {
             try
@@ -125,6 +129,7 @@ namespace UE_ManagerWebApp.Controllers
         }
 
         // GET: Users/Edit/5
+        [Authorize]
         public async Task<IActionResult> Edit(int? id)
         {
             try
@@ -206,7 +211,73 @@ namespace UE_ManagerWebApp.Controllers
             
         }
 
+        public IActionResult ChangePassword()
+        {
+            try
+            {
+                string role;
+                if (TempData["UserRole"] != null)
+                    role = TempData["UserRole"] as string;
+                TempData.Keep();
+
+                return View();
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ChangePassword(ConfirmPassword passwords)
+        {
+            try
+            {
+                string role;
+                if (TempData["UserRole"] != null)
+                    role = TempData["UserRole"] as string;
+
+                TempData.Keep();
+
+                if (ModelState.IsValid)
+                {
+                    
+                    if (passwords.Password != passwords.CheckPassword)
+                    {
+                        ViewBag.MessageConfirmation = "Las contraseñas deben de ser iguales.";
+                        return View();
+                    }
+                    else
+                    {
+                        Users users;
+                        string username = string.Empty;
+                        string newPassword = MD5.MD5Crypto.Encrypt(passwords.Password);
+                        foreach (var claim in HttpContext.User.Claims)
+                            if (claim.Type.Equals("Username"))
+                                username = claim.Value.ToString();
+                        users = _context.Users.FirstOrDefault(x=> x.Username.Equals(username));
+                        users.Password = newPassword;
+                        _context.Update(users);
+                        await _context.SaveChangesAsync();
+                    }
+                    ViewBag.MessageConfirmation = "Tu contraseña fue actualizada correctamente.";
+                    return View();
+                }
+                return View();
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+        }
+
         // GET: Users/Delete/5
+        [Authorize]
         public async Task<IActionResult> Delete(int? id)
         {
             try

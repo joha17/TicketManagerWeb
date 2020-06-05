@@ -91,7 +91,7 @@ namespace UE_ManagerWebApp.Controllers
                 string role;
                 if (TempData["UserRole"] != null)
                     role = TempData["UserRole"] as string;
-
+                TempData.Keep();
                 if (id == null)
                 {
                     return NotFound();
@@ -123,6 +123,7 @@ namespace UE_ManagerWebApp.Controllers
                 string role;
                 if (TempData["UserRole"] != null)
                     role = TempData["UserRole"] as string;
+                TempData.Keep();
                 return View();
             }
             catch (Exception)
@@ -145,7 +146,7 @@ namespace UE_ManagerWebApp.Controllers
                 string role;
                 if (TempData["UserRole"] != null)
                     role = TempData["UserRole"] as string;
-
+                TempData.Keep();
                 if (ModelState.IsValid)
                 {
                     _context.Add(customers);
@@ -171,7 +172,7 @@ namespace UE_ManagerWebApp.Controllers
                 string role;
                 if (TempData["UserRole"] != null)
                     role = TempData["UserRole"] as string;
-
+                TempData.Keep();
                 if (id == null)
                 {
                     return NotFound();
@@ -205,7 +206,7 @@ namespace UE_ManagerWebApp.Controllers
                 string role;
                 if (TempData["UserRole"] != null)
                     role = TempData["UserRole"] as string;
-
+                TempData.Keep();
                 if (id != customers.Id)
                 {
                     return NotFound();
@@ -249,6 +250,20 @@ namespace UE_ManagerWebApp.Controllers
                 string role;
                 if (TempData["UserRole"] != null)
                     role = TempData["UserRole"] as string;
+                TempData.Keep();
+                if (id == null)
+                {
+                    return NotFound();
+                }
+
+                var tickets = await _context.Customers
+                    .FirstOrDefaultAsync(m => m.Id == id);
+                if (tickets == null)
+                {
+                    return NotFound();
+                }
+
+                return View(tickets);
             }
             catch (Exception)
             {
@@ -269,7 +284,7 @@ namespace UE_ManagerWebApp.Controllers
                 string role;
                 if (TempData["UserRole"] != null)
                     role = TempData["UserRole"] as string;
-
+                TempData.Keep();
                 var customers = await _context.Customers.FindAsync(id);
                 _context.Customers.Remove(customers);
                 await _context.SaveChangesAsync();

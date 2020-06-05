@@ -120,7 +120,7 @@ namespace UE_ManagerWebApp
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                    template: "{controller=Authentication}/{action=LoginUser}/{id?}");
             });
         }
     }

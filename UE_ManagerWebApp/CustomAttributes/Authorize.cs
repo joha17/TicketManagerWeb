@@ -30,21 +30,19 @@ namespace UE_ManagerWebApp.CustomAttributes
         {
             var IsAuthenticated = context.HttpContext.User.Identity.IsAuthenticated;
             var claimsIndentity = context.HttpContext.User.Identity as ClaimsIdentity;
-
+            string role = string.Empty;
             foreach (var claim in context.HttpContext.User.Claims)
-                Console.WriteLine($"ClaimType:[{claim.Type}], ClaimValue:[{claim.Value}], Issuer:[{claim.Issuer}]");
+                if (claim.Type.Equals("AccessLevel"))
+                    role = claim.Value.ToString();
+
+            //Console.WriteLine($"ClaimType:[{claim.Type}], ClaimValue:[{claim.Value}], Issuer:[{claim.Issuer}]");
 
             if (IsAuthenticated)
             {
                 bool flagClaim = false;
-                foreach (var item in _claim)
+                if (role.Equals("ADMIN"))
                 {
-                    if (context.HttpContext.User.HasClaim(item, item))
-                        flagClaim = true;
-                    if (context.HttpContext.User.HasClaim(c => c.Type == ClaimTypes.Role))
-                        claimsIndentity.AddClaim(new Claim(ClaimTypes.Country, "Canada"));
-                        context.HttpContext.User.AddIdentity(claimsIndentity);
-                        flagClaim = true;
+                    flagClaim = true;
                 }
                 if (!flagClaim)
                     context.Result = new RedirectResult("~/Authentication/NoPermission");

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -22,80 +23,119 @@ namespace UE_ManagerWebApp.Controllers
         }
 
         // GET: Tickets
+        [Microsoft.AspNetCore.Authorization.Authorize]
         public async Task<IActionResult> Index(string sortOrder, string currentFilter, string searchString, int? pageNumber)
         {
-            
-            ViewData["CurrentSort"] = sortOrder;
-            ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
-            ViewData["DateSortParm"] = sortOrder == "Date" ? "date_desc" : "Date";
-            if (searchString != null)
+            try
             {
-                pageNumber = 1;
+                string role;
+                if (TempData["UserRole"] != null)
+                    role = TempData["UserRole"] as string;
+                TempData.Keep();
+
+                ViewData["CurrentSort"] = sortOrder;
+                ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+                ViewData["DateSortParm"] = sortOrder == "Date" ? "date_desc" : "Date";
+                if (searchString != null)
+                {
+                    pageNumber = 1;
+                }
+                else
+                {
+                    searchString = currentFilter;
+                }
+
+                ViewData["CurrentFilter"] = searchString;
+
+                var tickets = from s in _context.Tickets.Include(t => t.Application).Include(c => c.Cause).Include(d => d.Department).Include(k => k.Customer)
+                              select s;
+                if (!String.IsNullOrEmpty(searchString))
+                {
+                    tickets = tickets.Where(s => s.TicketNumber.Contains(searchString));
+                }
+                switch (sortOrder)
+                {
+                    case "name_desc":
+                        tickets = tickets.OrderByDescending(s => s.TicketNumber);
+                        break;
+                    case "Date":
+                        tickets = tickets.OrderBy(s => s.CreationDate);
+                        break;
+                    case "date_desc":
+                        tickets = tickets.OrderByDescending(s => s.CreationDate);
+                        break;
+                    default:
+                        tickets = tickets.OrderBy(s => s.TicketNumber);
+                        break;
+                }
+                int pageSize = 10;
+
+                foreach (var claim in HttpContext.User.Claims)
+                    Console.WriteLine($"ClaimType:[{claim.Type}], ClaimValue:[{claim.Value}], Issuer:[{claim.Issuer}]");
+
+                return View(await PaginatedList<Tickets>.CreateAsync(tickets.AsNoTracking(), pageNumber ?? 1, pageSize));
             }
-            else
+            catch (Exception)
             {
-                searchString = currentFilter;
+
+                throw;
             }
-
-            ViewData["CurrentFilter"] = searchString;
-
-            var tickets = from s in _context.Tickets.Include(t => t.Application).Include(c => c.Cause).Include(d => d.Department).Include(k => k.Customer)
-                           select s;
-            if (!String.IsNullOrEmpty(searchString))
-            {
-                tickets = tickets.Where(s => s.TicketNumber.Contains(searchString));
-            }
-            switch (sortOrder)
-            {
-                case "name_desc":
-                    tickets = tickets.OrderByDescending(s => s.TicketNumber);
-                    break;
-                case "Date":
-                    tickets = tickets.OrderBy(s => s.CreationDate);
-                    break;
-                case "date_desc":
-                    tickets = tickets.OrderByDescending(s => s.CreationDate);
-                    break;
-                default:
-                    tickets = tickets.OrderBy(s => s.TicketNumber);
-                    break;
-            }
-            int pageSize = 10;
-
-            foreach (var claim in HttpContext.User.Claims)
-                Console.WriteLine($"ClaimType:[{claim.Type}], ClaimValue:[{claim.Value}], Issuer:[{claim.Issuer}]");
-
-            return View(await PaginatedList<Tickets>.CreateAsync(tickets.AsNoTracking(), pageNumber ?? 1, pageSize));
         }
 
         // GET: Tickets/Details/5
-        [Authorize]
+        [Microsoft.AspNetCore.Authorization.Authorize]
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
+            try
             {
-                return NotFound();
-            }
+                string role;
+                if (TempData["UserRole"] != null)
+                    role = TempData["UserRole"] as string;
+                TempData.Keep();
 
-            var tickets = await _context.Tickets.Include(t => t.Application).Include(c => c.Cause).Include(d => d.Department).Include(k => k.Customer)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (tickets == null)
+                if (id == null)
+                {
+                    return NotFound();
+                }
+
+                var tickets = await _context.Tickets.Include(t => t.Application).Include(c => c.Cause).Include(d => d.Department).Include(k => k.Customer)
+                    .FirstOrDefaultAsync(m => m.Id == id);
+                if (tickets == null)
+                {
+                    return NotFound();
+                }
+
+                return View(tickets);
+            }
+            catch (Exception)
             {
-                return NotFound();
-            }
 
-            return View(tickets);
+                throw;
+            }
         }
 
         // GET: Tickets/Create
-        [Authorize]
+        [Microsoft.AspNetCore.Authorization.Authorize]
         public IActionResult Create()
         {
-            ViewData["ApplicationId"] = new SelectList(_context.Applications, "Id", "ApplicationName");
-            ViewData["DepartmentId"] = new SelectList(_context.Departments, "Id", "Name");
-            ViewData["CauseId"] = new SelectList(_context.Causes, "Id", "Description");
-            ViewData["CustomerId"] = new SelectList(_context.Customers, "Id", "CustomerName");
-            return View();
+            try
+            {
+                string role;
+                if (TempData["UserRole"] != null)
+                    role = TempData["UserRole"] as string;
+                TempData.Keep();
+
+                ViewData["ApplicationId"] = new SelectList(_context.Applications, "Id", "ApplicationName");
+                ViewData["DepartmentId"] = new SelectList(_context.Departments, "Id", "Name");
+                ViewData["CauseId"] = new SelectList(_context.Causes, "Id", "Description");
+                ViewData["CustomerId"] = new SelectList(_context.Customers, "Id", "CustomerName");
+                return View();
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
 
         // POST: Tickets/Create
@@ -105,40 +145,66 @@ namespace UE_ManagerWebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,TicketNumber,Keyword,AssignDate,EndDate,Comment,CreationUser,CreationDate,UpdateUser,UpdateDate,AssignUser,CustomerId,ApplicationId,CauseId,DepartmentId")] Tickets tickets)
         {
-            if (ModelState.IsValid)
+            try
             {
-                tickets.CreationDate = DateTime.Now;
-                tickets.CreationUser = "jcervantes";
-                _context.Add(tickets);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                string role;
+                if (TempData["UserRole"] != null)
+                    role = TempData["UserRole"] as string;
+                TempData.Keep();
+
+                if (ModelState.IsValid)
+                {
+                    tickets.CreationDate = DateTime.Now;
+                    tickets.CreationUser = "jcervantes";
+                    _context.Add(tickets);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+                ViewData["ApplicationId"] = new SelectList(_context.Applications, "Id", "ApplicationName", tickets.ApplicationId);
+                ViewData["DepartmentId"] = new SelectList(_context.Departments, "Id", "Name", tickets.DepartmentId);
+                ViewData["CauseId"] = new SelectList(_context.Causes, "Id", "Description", tickets.CauseId);
+                ViewData["CustomerId"] = new SelectList(_context.Customers, "Id", "CustomerName", tickets.CustomerId);
+                return View(tickets);
             }
-            ViewData["ApplicationId"] = new SelectList(_context.Applications, "Id", "ApplicationName", tickets.ApplicationId);
-            ViewData["DepartmentId"] = new SelectList(_context.Departments, "Id", "Name", tickets.DepartmentId);
-            ViewData["CauseId"] = new SelectList(_context.Causes, "Id", "Description", tickets.CauseId);
-            ViewData["CustomerId"] = new SelectList(_context.Customers, "Id", "CustomerName", tickets.CustomerId);
-            return View(tickets);
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
 
         // GET: Tickets/Edit/5
-        [Authorize]
+        [Microsoft.AspNetCore.Authorization.Authorize]
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
+            try
             {
-                return NotFound();
-            }
+                string role;
+                if (TempData["UserRole"] != null)
+                    role = TempData["UserRole"] as string;
+                TempData.Keep();
 
-            var tickets = await _context.Tickets.FindAsync(id);
-            if (tickets == null)
-            {
-                return NotFound();
+                if (id == null)
+                {
+                    return NotFound();
+                }
+
+                var tickets = await _context.Tickets.FindAsync(id);
+                if (tickets == null)
+                {
+                    return NotFound();
+                }
+                ViewData["ApplicationId"] = new SelectList(_context.Applications, "Id", "ApplicationName", tickets.ApplicationId);
+                ViewData["DepartmentId"] = new SelectList(_context.Departments, "Id", "Name", tickets.DepartmentId);
+                ViewData["CauseId"] = new SelectList(_context.Causes, "Id", "Description", tickets.CauseId);
+                ViewData["CustomerId"] = new SelectList(_context.Customers, "Id", "CustomerName", tickets.CustomerId);
+                return View(tickets);
             }
-            ViewData["ApplicationId"] = new SelectList(_context.Applications, "Id", "ApplicationName", tickets.ApplicationId);
-            ViewData["DepartmentId"] = new SelectList(_context.Departments, "Id", "Name", tickets.DepartmentId);
-            ViewData["CauseId"] = new SelectList(_context.Causes, "Id", "Description", tickets.CauseId);
-            ViewData["CustomerId"] = new SelectList(_context.Customers, "Id", "CustomerName", tickets.CustomerId);
-            return View(tickets);
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
 
         // POST: Tickets/Edit/5
@@ -148,57 +214,82 @@ namespace UE_ManagerWebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,TicketNumber,Keyword,AssignDate,EndDate,Comment,CreationUser,CreationDate,UpdateUser,UpdateDate,AssignUser,CustomerId,ApplicationId,CauseId,DepartmentId")] Tickets tickets)
         {
-            if (id != tickets.Id)
+            try
             {
-                return NotFound();
-            }
+                string role;
+                if (TempData["UserRole"] != null)
+                    role = TempData["UserRole"] as string;
+                TempData.Keep();
 
-            if (ModelState.IsValid)
-            {
-                try
+                if (id != tickets.Id)
                 {
-                    tickets.UpdateDate = DateTime.Now;
-                    tickets.UpdateUser = "jcervantes";
-                    _context.Update(tickets);
-                    await _context.SaveChangesAsync();
+                    return NotFound();
                 }
-                catch (DbUpdateConcurrencyException)
+
+                if (ModelState.IsValid)
                 {
-                    if (!TicketsExists(tickets.Id))
+                    try
                     {
-                        return NotFound();
+                        tickets.UpdateDate = DateTime.Now;
+                        tickets.UpdateUser = "jcervantes";
+                        _context.Update(tickets);
+                        await _context.SaveChangesAsync();
                     }
-                    else
+                    catch (DbUpdateConcurrencyException)
                     {
-                        throw;
+                        if (!TicketsExists(tickets.Id))
+                        {
+                            return NotFound();
+                        }
+                        else
+                        {
+                            throw;
+                        }
                     }
+                    return RedirectToAction(nameof(Index));
                 }
-                return RedirectToAction(nameof(Index));
+                ViewData["ApplicationId"] = new SelectList(_context.Applications, "Id", "ApplicationName", tickets.ApplicationId);
+                ViewData["DepartmentId"] = new SelectList(_context.Departments, "Id", "Name", tickets.DepartmentId);
+                ViewData["CauseId"] = new SelectList(_context.Causes, "Id", "Description", tickets.CauseId);
+                ViewData["CustomerId"] = new SelectList(_context.Customers, "Id", "CustomerName", tickets.CustomerId);
+                return View(tickets);
             }
-            ViewData["ApplicationId"] = new SelectList(_context.Applications, "Id", "ApplicationName", tickets.ApplicationId);
-            ViewData["DepartmentId"] = new SelectList(_context.Departments, "Id", "Name", tickets.DepartmentId);
-            ViewData["CauseId"] = new SelectList(_context.Causes, "Id", "Description", tickets.CauseId);
-            ViewData["CustomerId"] = new SelectList(_context.Customers, "Id", "CustomerName", tickets.CustomerId);
-            return View(tickets);
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
 
         // GET: Tickets/Delete/5
-        [Authorize]
+        [Microsoft.AspNetCore.Authorization.Authorize]
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
+            try
             {
-                return NotFound();
-            }
+                string role;
+                if (TempData["UserRole"] != null)
+                    role = TempData["UserRole"] as string;
+                TempData.Keep();
+                if (id == null)
+                {
+                    return NotFound();
+                }
 
-            var tickets = await _context.Tickets
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (tickets == null)
+                var tickets = await _context.Tickets
+                    .FirstOrDefaultAsync(m => m.Id == id);
+                if (tickets == null)
+                {
+                    return NotFound();
+                }
+
+                return View(tickets);
+            }
+            catch (Exception)
             {
-                return NotFound();
-            }
 
-            return View(tickets);
+                throw;
+            }
         }
 
         // POST: Tickets/Delete/5
@@ -206,10 +297,22 @@ namespace UE_ManagerWebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var tickets = await _context.Tickets.FindAsync(id);
-            _context.Tickets.Remove(tickets);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            try
+            {
+                string role;
+                if (TempData["UserRole"] != null)
+                    role = TempData["UserRole"] as string;
+                TempData.Keep();
+                var tickets = await _context.Tickets.FindAsync(id);
+                _context.Tickets.Remove(tickets);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
 
         private bool TicketsExists(int id)

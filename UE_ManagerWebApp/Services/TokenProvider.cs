@@ -58,8 +58,7 @@ namespace UE_ManagerWebApp.Services
                 new Claim(ClaimTypes.Name, user.FirstName + " " + user.LastName),
                 new Claim("Username", user.Username),
                 new Claim("EmailID", user.EmailID),
-                new Claim("AccessLevel", user.AccessLevel.ToUpper()),
-                new Claim("ReadOnly", user.ReadOnly.ToUpper())
+                new Claim("AccessLevel", user.AccessLevel.ToUpper())
             };
             return claims;
         }

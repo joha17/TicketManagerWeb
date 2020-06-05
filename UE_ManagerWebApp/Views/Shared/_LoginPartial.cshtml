@@ -10,7 +10,7 @@
         {
             <ul class="navbar-nav px-3">
                 <li class="nav-item text-nowrap">
-                    <a class="nav-link dark"  title="Manage">Hello! @User.Identity.Name</a>
+                    <a class="nav-link dark"  title="Manage">Bienvenido! @User.Identity.Name</a>
                 </li>
             </ul>
             <ul class="navbar-nav px-3">
@@ -50,28 +50,28 @@
                             @if (TempData["UserRole"].ToString() != "ADMIN")
                             {
                                 <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Tickets" asp-action="Index">Tickets</a>
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Tickets" asp-action="Index">Incidentes</a>
                                 </li>
                             }
                             else
                             {
                                 <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Tickets" asp-action="Index">Tickets</a>
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Tickets" asp-action="Index">Incidentes</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Applications" asp-action="Index">Applications</a>
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Applications" asp-action="Index">Aplicaciones</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Causes" asp-action="Index">Causes</a>
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Causes" asp-action="Index">Causas</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Departments" asp-action="Index">Departments</a>
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Departments" asp-action="Index">Departamentos</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Customers" asp-action="Index">Customers</a>
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Customers" asp-action="Index">Clientes</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Index">Users</a>
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Index">Usuarios</a>
                                 </li>
                             }
 
@@ -85,28 +85,7 @@
                         </h6>
                         <ul class="nav flex-column mb-2">
                             <li class="nav-item">
-                                <a class="nav-link" href="#">
-                                    <span data-feather="file-text"></span>
-                                    Current month
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="#">
-                                    <span data-feather="file-text"></span>
-                                    Last quarter
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="#">
-                                    <span data-feather="file-text"></span>
-                                    Social engagement
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="#">
-                                    <span data-feather="file-text"></span>
-                                    Year-end sale
-                                </a>
+                                <a class="nav-link" asp-area="" asp-controller="Users" asp-action="ChangePassword">Cambiar Contraseña</a>
                             </li>
                         </ul>
                     </div>
