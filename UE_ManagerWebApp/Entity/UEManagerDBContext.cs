@@ -18,6 +18,7 @@ namespace UE_ManagerWebApp.Entity
         public DbSet<Applications> Applications { get; set; }
         public DbSet<Customers> Customers { get; set; }
         public DbSet<UE_ManagerWebApp.Models.Tickets> Tickets { get; set; }
+        public DbSet<UE_ManagerWebApp.Models.Users> Users { get; set; }
 
     }
 }
