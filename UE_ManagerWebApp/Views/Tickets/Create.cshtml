@@ -4,62 +4,72 @@
     ViewData["Title"] = "Create";
 }
 
+@*<link rel="stylesheet" href="http://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>*@
+
+
 <h1>Create</h1>
 
 <h4>Tickets</h4>
 <hr />
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="TicketNumber" class="control-label"></label>
-                <input asp-for="TicketNumber" class="form-control" type="number"/>
-                <span asp-validation-for="TicketNumber" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Keyword" class="control-label"></label>
-                <input asp-for="Keyword" class="form-control" />
-                <span asp-validation-for="Keyword" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="AssignDate" class="control-label"></label>
-                <input asp-for="AssignDate" class="form-control" type="datetime-local" />
-                <span asp-validation-for="AssignDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="EndDate" class="control-label"></label>
-                <input asp-for="EndDate" class="form-control" type="datetime-local" />
-                <span asp-validation-for="EndDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Comment" class="control-label"></label>
-                <textarea asp-for="Comment" class="form-control" rows="4" type="text"></textarea>
-                <span asp-validation-for="Comment" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="AssignUser" class="control-label"></label>
-                <input asp-for="AssignUser" class="form-control" />
-                <span asp-validation-for="AssignUser" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CustomerId" class="control-label"></label>
-                <select asp-for="CustomerId" class="form-control" asp-items="ViewBag.CustomerId"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="ApplicationId" class="control-label"></label>
-                <select asp-for="ApplicationId" class="form-control" asp-items="ViewBag.ApplicationId"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="DepartmentId" class="control-label"></label>
-                <select asp-for="DepartmentId" class="form-control" asp-items="ViewBag.DepartmentId"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="CauseId" class="control-label"></label>
-                <select asp-for="CauseId" class="form-control" asp-items="ViewBag.CauseId"></select>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+<form asp-action="Create">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="form-group">
+        <label asp-for="TicketNumber" class="control-label"></label>
+        <input asp-for="TicketNumber" class="form-control" type="number" />
+        <span asp-validation-for="TicketNumber" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Keyword" class="control-label"></label>
+        <input asp-for="Keyword" class="form-control" />
+        <span asp-validation-for="Keyword" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="AssignDate" class="control-label"></label>
+        <input asp-for="AssignDate" class="form-control" type="datetime-local" />
+        <span asp-validation-for="AssignDate" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="EndDate" class="control-label"></label>
+        <input asp-for="EndDate" class="form-control" type="datetime-local" />
+        <span asp-validation-for="EndDate" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Comment" class="control-label"></label>
+        <textarea asp-for="Comment" class="form-control" rows="4" type="text"></textarea>
+        <span asp-validation-for="Comment" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        @*<label asp-for="AssignUser" class="control-label"></label>
+        <input asp-for="AssignUser" class="form-control" />
+        <span asp-validation-for="AssignUser" class="text-danger"></span>*@
+
+        <label asp-for="AssignUser" class="control-label"></label>
+        <input asp-for="AssignUser" type="text" class="form-control" id="productName" placeholder="Digite un usuario" />
+        <span asp-validation-for="AssignUser" class="text-danger"></span>
+
+    </div>
+    <div class="form-group">
+        <label asp-for="CustomerId" class="control-label"></label>
+        <select asp-for="CustomerId" class="form-control" asp-items="ViewBag.CustomerId"></select>
+    </div>
+    <div class="form-group">
+        <label asp-for="ApplicationId" class="control-label"></label>
+        <select asp-for="ApplicationId" class="form-control" asp-items="ViewBag.ApplicationId"></select>
+    </div>
+    <div class="form-group">
+        <label asp-for="DepartmentId" class="control-label"></label>
+        <select asp-for="DepartmentId" class="form-control" asp-items="ViewBag.DepartmentId"></select>
+    </div>
+    <div class="form-group">
+        <label asp-for="CauseId" class="control-label"></label>
+        <select asp-for="CauseId" class="form-control" asp-items="ViewBag.CauseId"></select>
+    </div>
+    <div class="form-group">
+        <input type="submit" value="Create" class="btn btn-primary" />
+    </div>
+</form>
 
 
 <div>
@@ -68,4 +78,13 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+<script>
+    $(document).ready(function () {
+        $('#productName').autocomplete({
+            source: '/api/user/search'
+        });
+    });
+</script>
 }
+
