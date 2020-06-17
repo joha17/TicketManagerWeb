@@ -49,8 +49,6 @@ namespace UE_ManagerWebApp.Controllers
                     .Users
                     .SingleOrDefaultAsync(u => u.Username == login.Username);
 
-                var userr = _context.Users.SingleOrDefault(x => x.Username == "jcervantes");
-
                 TokenProvider _tokenProvider = new TokenProvider();
                 var userToken = _tokenProvider.LoginUser(login.Username.Trim(), login.Password.Trim(), dbUser);
                 if (userToken != null)
