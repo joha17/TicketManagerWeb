@@ -7,7 +7,7 @@
 <h1>Incidentes</h1>
 
 <p>
-    <a class="btn btn-success" type="button" asp-action="Create" role="button">Create New</a>
+    <a class="btn btn-success" type="button" asp-action="Create" role="button">Nuevo Incidente</a>
 </p>
 <form asp-action="Index" method="get">
     <div class="form-row align-items-center">
@@ -43,16 +43,7 @@
                 Fecha de Creación
             </th>
             <th>
-                Departamento
-            </th>
-            <th>
                 Cliente
-            </th>
-            <th>
-                Aplicación
-            </th>
-            <th>
-                Causa
             </th>
             <th></th>
         </tr>
@@ -77,21 +68,12 @@
                     @Html.DisplayFor(modelItem => item.CreationDate)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Department.Name)
-                </td>
-                <td>
                     @Html.DisplayFor(modelItem => item.Customer.CustomerName)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Application.ApplicationName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Cause.Description)
-                </td>
-                <td>
-                    <a class="btn btn-warning" type="button" asp-action="Edit" asp-route-id="@item.Id" role="button">Edit</a>
-                    <a class="btn btn-info" type="button" asp-action="Details" asp-route-id="@item.Id" role="button">Details</a>
-                    <a class="btn btn-danger" type="button" asp-action="Delete" asp-route-id="@item.Id" role="button">Delete</a>
+                    <a class="btn btn-warning" type="button" asp-action="Edit" asp-route-id="@item.Id" role="button"><i class="fas fa-edit"></i></a>
+                    <a class="btn btn-info" type="button" asp-action="Details" asp-route-id="@item.Id" role="button"><i class="fas fa-eye"></i></a>
+                    <a class="btn btn-danger" type="button" asp-action="Delete" asp-route-id="@item.Id" role="button"><i class="fas fa-trash"></i></a>
                 </td>
             </tr>
         }

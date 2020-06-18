@@ -18,9 +18,9 @@
         <div class="col-auto">
             <button type="submit" value="Search" class="btn btn-primary">Buscar</button>
         </div>
-        <div class="col-auto">
+        @*<div class="col-auto">
             <a asp-action="Index" class="btn btn-info">Lista completa</a>
-        </div>
+        </div>*@
     </div>
 </form>
 <br />
@@ -37,19 +37,7 @@
                 Estado
             </th>
             <th>
-                Emisor o Adquirente
-            </th>
-            <th>
                 <a asp-action="Index" asp-route-sortOrder="@ViewData["DateSortParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">Fecha de Creación</a>
-            </th>
-            <th>
-                Usuario de Creación
-            </th>
-            <th>
-                Fecha de Actualización
-            </th>
-            <th>
-                Fecha de Actualización
             </th>
             <th>
                 País
@@ -81,26 +69,7 @@
                     }
                 </td>
                 <td>
-                    @if (item.IssuerAdquier.Equals("A"))
-                    {
-                        <a>Adquirente</a>
-                    }
-                    else
-                    {
-                        <a>Emisor</a>
-                    }
-                </td>
-                <td>
                     @Html.DisplayFor(modelItem => item.CreationDate)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.CreationUser)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.UpdateDate)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.UpdateUser)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.CountryCode)

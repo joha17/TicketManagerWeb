@@ -4,18 +4,11 @@
     ViewData["Title"] = "Details";
 }
 
-<h1>Details</h1>
+<h1>Detalle</h1>
 
-<div>
-    <h4>Tickets</h4>
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.TicketNumber)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.TicketNumber)
-        </dd>
+    <div class="jumbotron">
+        <h3 class="display-4">#@Html.DisplayFor(model => model.TicketNumber)</h3>
+        <br />
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Keyword)
         </dt>
@@ -76,9 +69,7 @@
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Application.ApplicationName)
         </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+        <hr class="my-4">
+        <a class="btn btn-primary" asp-action="Edit" asp-route-id="@Model.Id">Editar</a> 
+        <a class="btn btn-dark" asp-action="Index">Regresar</a>
+    </div>

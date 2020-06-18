@@ -37,13 +37,7 @@
                 <a asp-action="Index" asp-route-sortOrder="@ViewData["NameSortParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">Fecha de Creación</a>
             </th>
             <th>
-                Usuario de Creación
-            </th>
-            <th>
                 Fecha de Actualización
-            </th>
-            <th>
-                Usuario de Actualización
             </th>
             <th></th>
         </tr>
@@ -56,19 +50,28 @@
                     @Html.DisplayFor(modelItem => item.ApplicationName)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.ApplicationType)
+                    @if (item.ApplicationType == 0)
+                    {
+                        <a>AS400</a>
+                    }
+                    @if (item.ApplicationType == 1)
+                    {
+                        <a>ETL</a>
+                    }
+                    @if (item.ApplicationType == 2)
+                    {
+                        <a>Web</a>
+                    }
+                    @if (item.ApplicationType == 3)
+                    {
+                        <a>Desktop</a>
+                    }
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.CreationDate)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.CreationUser)
-                </td>
-                <td>
                     @Html.DisplayFor(modelItem => item.UpdateDate)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.UpdateUser)
                 </td>
                 <td>
                     <a class="btn btn-warning" type="button" asp-action="Edit" asp-route-id="@item.Id" role="button">Edit</a>
