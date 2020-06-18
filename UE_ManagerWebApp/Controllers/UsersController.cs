@@ -41,6 +41,12 @@ namespace UE_ManagerWebApp.Controllers
             
         }
 
+        [HttpGet]
+        public JsonResult GetList(string name)
+        {
+            return Json(_context.Users.Where(x => x.Username.StartsWith(name)).ToList());
+        }
+
         // GET: Users/Details/5
         [Authorize]
         public async Task<IActionResult> Details(int? id)

@@ -4,9 +4,9 @@
     ViewData["Title"] = "Create";
 }
 
-@*<link rel="stylesheet" href="http://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>*@
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-3-typeahead/4.0.2/bootstrap3-typeahead.min.js"></script>
+
 
 
 <h1>Nuevo</h1>
@@ -42,8 +42,8 @@
     </div>
     <div class="form-group">
         @*<label asp-for="AssignUser" class="control-label"></label>
-        <input asp-for="AssignUser" class="form-control" />
-        <span asp-validation-for="AssignUser" class="text-danger"></span>*@
+            <input asp-for="AssignUser" class="form-control" />
+            <span asp-validation-for="AssignUser" class="text-danger"></span>*@
 
         <label asp-for="AssignUser" class="control-label"></label>
         <input asp-for="AssignUser" type="text" class="form-control" id="productName" placeholder="Digite un usuario" />
@@ -66,6 +66,12 @@
         <label asp-for="CauseId" class="control-label"></label>
         <select asp-for="CauseId" class="form-control" asp-items="ViewBag.CauseId"></select>
     </div>
+
+    <div class="row">
+        <div class="form-group col-md-5"> <input type="text" id="select" class="form-control" /> </div>
+        <div class="form-group col-md-5"> <input type="text" id="update" disabled class="form-control" /> </div>
+    </div>
+
     <div class="form-group">
         <input type="submit" value="Crear" class="btn btn-primary" />
     </div>
@@ -79,12 +85,47 @@
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 
-<script>
-    $(document).ready(function () {
-        $('#productName').autocomplete({
-            source: '/api/user/search'
+    <script>
+        $(document).ready(function () {
+            $('#productName').autocomplete({
+                source: '/api/user/search'
+            });
         });
-    });
-</script>
+
+        $("#select").typeahead({
+            minLength: 1,
+            source: function (request, response) {
+                $.ajax({
+                    url: "/Users/GetList/",
+                    data: {
+                        "name": request
+                    },
+                    type: "GET",
+                    contentType: "json",
+                    success: function (data) {
+                        items = [];
+                        map = {};
+                        $.each(data, function (i, item) {
+                            var id = item.Name;
+                            var name = item.Name;
+                            map[name] = {
+                                id: id,
+                                name: name
+                            };
+                            items.push(name);
+                        });
+                        response(items);
+                    },
+                    error: function (response) {
+                        alert(response.responseText);
+                    },
+                    failure: function (response) {
+                        alert(response.responseText);
+                    }
+                });
+            },
+            updater: function (item) { //If simultaneously want to update value somewhere else $("#update").val(map[item].id); return item; } });    
+
+    </script>
 }
 

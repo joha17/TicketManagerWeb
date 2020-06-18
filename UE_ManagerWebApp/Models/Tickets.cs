@@ -47,14 +47,15 @@ namespace UE_ManagerWebApp.Models
         public Applications Application { get; set; }
 
 
+        [Display(Name = "Causa Raiz")]
         public int CauseId { get; set; }
         public Causes Cause { get; set; }
 
-
+        [Display(Name = "Departamento")]
         public int DepartmentId { get; set; }
         public Departments Department { get; set; }
 
-
+        [Display(Name = "Cliente")]
         public int CustomerId { get; set; }
         public Customers Customer { get; set; }
 

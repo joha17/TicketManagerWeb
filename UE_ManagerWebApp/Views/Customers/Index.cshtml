@@ -78,9 +78,9 @@
                     @Html.DisplayFor(modelItem => item.Wallet)
                 </td>
                 <td>
-                    <a class="btn btn-warning" type="button" asp-action="Edit" asp-route-id="@item.Id" role="button">Edit</a>
-                    <a class="btn btn-info" type="button" asp-action="Details" asp-route-id="@item.Id" role="button">Details</a>
-                    <a class="btn btn-danger" type="button" asp-action="Delete" asp-route-id="@item.Id" role="button">Delete</a>
+                    <a class="btn btn-warning" type="button" asp-action="Edit" asp-route-id="@item.Id" role="button"><i class="fas fa-edit"></i></a>
+                    <a class="btn btn-info" type="button" asp-action="Details" asp-route-id="@item.Id" role="button"><i class="fas fa-eye"></i></a>
+                    <a class="btn btn-danger" type="button" asp-action="Delete" asp-route-id="@item.Id" role="button"><i class="fas fa-trash"></i></a>
                 </td>
             </tr>
         }
