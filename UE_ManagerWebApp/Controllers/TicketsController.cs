@@ -16,10 +16,12 @@ namespace UE_ManagerWebApp.Controllers
     public class TicketsController : Controller
     {
         private readonly UEManagerDBContext _context;
+        private readonly AuthDBContext _contextUsers;
 
-        public TicketsController(UEManagerDBContext context)
+        public TicketsController(UEManagerDBContext context, AuthDBContext contextUsers)
         {
             _context = context;
+            _contextUsers = contextUsers;
         }
 
         // GET: Tickets
@@ -129,6 +131,7 @@ namespace UE_ManagerWebApp.Controllers
                 ViewData["DepartmentId"] = new SelectList(_context.Departments, "Id", "Name");
                 ViewData["CauseId"] = new SelectList(_context.Causes, "Id", "Description");
                 ViewData["CustomerId"] = new SelectList(_context.Customers, "Id", "CustomerName");
+                ViewData["Username"] = new SelectList(_contextUsers.Users.OrderBy(x=> x.Username), "Username", "Username");
                 return View();
             }
             catch (Exception)

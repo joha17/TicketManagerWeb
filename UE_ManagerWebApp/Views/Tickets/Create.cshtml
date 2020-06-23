@@ -46,7 +46,8 @@
             <span asp-validation-for="AssignUser" class="text-danger"></span>*@
 
         <label asp-for="AssignUser" class="control-label"></label>
-        <input asp-for="AssignUser" type="text" class="form-control" id="productName" placeholder="Digite un usuario" />
+        @*<input asp-for="AssignUser" type="text" class="form-control" id="productName" placeholder="Digite un usuario" />*@
+        <select asp-for="AssignUser" class="form-control" asp-items="ViewBag.Username"></select>
         <span asp-validation-for="AssignUser" class="text-danger"></span>
 
     </div>
@@ -67,16 +68,43 @@
         <select asp-for="CauseId" class="form-control" asp-items="ViewBag.CauseId"></select>
     </div>
 
-    <div class="row">
-        <div class="form-group col-md-5"> <input type="text" id="select" class="form-control" /> </div>
-        <div class="form-group col-md-5"> <input type="text" id="update" disabled class="form-control" /> </div>
-    </div>
-
     <div class="form-group">
         <input type="submit" value="Crear" class="btn btn-primary" />
     </div>
 </form>
 
+<div class="container">
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="form-group">
+                <div class="input-group date" id="datetimepicker1" data-target-input="nearest">
+                    <input type="text" class="form-control datetimepicker-input" data-target="#datetimepicker1" />
+                    <div class="input-group-append" data-target="#datetimepicker1" data-toggle="datetimepicker">
+                        <div class="input-group-text"><i class="far fa-calendar"></i></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script type="text/javascript">
+            $(function () {
+                $('#datetimepicker1').datetimepicker();
+            });
+        </script>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-6">
+            <input type="text" class="form-control datetimepicker-input" id="datetimepicker5" data-toggle="datetimepicker" data-target="#datetimepicker5" />
+        </div>
+        <script type="text/javascript">
+            $(function () {
+                $('#datetimepicker5').datetimepicker();
+            });
+        </script>
+    </div>
+</div>
 
 <div>
     <a class="btn btn-dark" type="button" asp-action="Index" role="button">Regresar</a>
@@ -92,39 +120,6 @@
             });
         });
 
-        $("#select").typeahead({
-            minLength: 1,
-            source: function (request, response) {
-                $.ajax({
-                    url: "/Users/GetList/",
-                    data: {
-                        "name": request
-                    },
-                    type: "GET",
-                    contentType: "json",
-                    success: function (data) {
-                        items = [];
-                        map = {};
-                        $.each(data, function (i, item) {
-                            var id = item.Name;
-                            var name = item.Name;
-                            map[name] = {
-                                id: id,
-                                name: name
-                            };
-                            items.push(name);
-                        });
-                        response(items);
-                    },
-                    error: function (response) {
-                        alert(response.responseText);
-                    },
-                    failure: function (response) {
-                        alert(response.responseText);
-                    }
-                });
-            },
-            updater: function (item) { //If simultaneously want to update value somewhere else $("#update").val(map[item].id); return item; } });    
 
     </script>
 }
