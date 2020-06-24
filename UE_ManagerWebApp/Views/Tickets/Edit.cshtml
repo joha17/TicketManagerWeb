@@ -24,12 +24,22 @@
             </div>
             <div class="form-group">
                 <label asp-for="AssignDate" class="control-label"></label>
-                <input asp-for="AssignDate" class="form-control" />
+                <div class="input-group date" id="datetimepicker2" data-target-input="nearest">
+                    <input asp-for="AssignDate" type="text" class="form-control datetimepicker-input" data-target="#datetimepicker2" />
+                    <div class="input-group-append" data-target="#datetimepicker2" data-toggle="datetimepicker">
+                        <div class="input-group-text"><i class="far fa-calendar"></i></div>
+                    </div>
+                </div>
                 <span asp-validation-for="AssignDate" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="EndDate" class="control-label"></label>
-                <input asp-for="EndDate" class="form-control" />
+                <div class="input-group date" id="datetimepicker2" data-target-input="nearest">
+                    <input asp-for="EndDate" type="text" class="form-control datetimepicker-input" data-target="#datetimepicker2" />
+                    <div class="input-group-append" data-target="#datetimepicker2" data-toggle="datetimepicker">
+                        <div class="input-group-text"><i class="far fa-calendar"></i></div>
+                    </div>
+                </div>
                 <span asp-validation-for="EndDate" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -64,10 +74,23 @@
         </form>
 </div>
 
-<div>
-    <a class="btn btn-dark" type="button" asp-action="Index" role="button">Regresar</a>
+<div class="row">
+    <a class="btn btn-dark" type="button" asp-action="Index" role="button"><i class="fas fa-backward"></i>  Regresar</a>
 </div>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+<script>
+
+        $(function () {
+            $('#datetimepicker1').datetimepicker();
+        });
+
+        $(function () {
+            $('#datetimepicker2').datetimepicker();
+        });
+
+</script>
+
 }

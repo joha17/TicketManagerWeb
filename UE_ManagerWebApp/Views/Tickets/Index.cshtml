@@ -4,22 +4,24 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Incidentes</h1>
-
-<p>
-    <a class="btn btn-success" type="button" asp-action="Create" role="button">Nuevo Incidente</a>
-</p>
+    <h1>Incidentes</h1>
+    <a class="btn btn-warning" type="button" asp-action="Create" role="button"><i class="fas fa-plus"></i>  Nuevo Incidente</a>
+    <br /><br />
 <form asp-action="Index" method="get">
     <div class="form-row align-items-center">
-        <div class="col-auto">
+        @*<div class="col-auto">
             <label class="sr-only" for="inlineFormInput">Name</label>
             <input type="text" class="form-control" id="inlineFormInput" name="SearchString" value="@ViewData["currentFilter"]" placeholder="Numero de Ticket">
         </div>
         <div class="col-auto">
             <button type="submit" value="Search" class="btn btn-primary">Buscar</button>
-        </div>
-        <div class="col-auto">
-            <a asp-action="Index" class="btn btn-info">Lista completa</a>
+        </div>*@
+        <div class="input-group mb-3">
+            <label class="sr-only" for="inlineFormInput">Name</label>
+            <input type="text" class="form-control" id="inlineFormInput" placeholder="Numero de Ticket" name="SearchString" value="@ViewData["currentFilter"]">
+            <div class="input-group-append">
+                <button type="submit" value="Search" class="btn btn-outline-info"><i class="fas fa-search"></i></button>
+            </div>
         </div>
     </div>
 </form>
@@ -91,12 +93,12 @@
    asp-route-pageNumber="@(Model.PageIndex - 1)"
    asp-route-currentFilter="@ViewData["CurrentFilter"]"
    class="btn btn-dark @prevDisabled">
-    Anterior
+    <i class="fas fa-backward"></i>
 </a>
 <a asp-action="Index"
    asp-route-sortOrder="@ViewData["CurrentSort"]"
    asp-route-pageNumber="@(Model.PageIndex + 1)"
    asp-route-currentFilter="@ViewData["CurrentFilter"]"
    class="btn btn-dark @nextDisabled">
-    Siguiente
+    <i class="fas fa-forward"></i>
 </a>

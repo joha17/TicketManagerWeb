@@ -27,12 +27,24 @@
     </div>
     <div class="form-group">
         <label asp-for="AssignDate" class="control-label"></label>
-        <input asp-for="AssignDate" class="form-control" type="datetime-local" />
+        @*<input asp-for="AssignDate" class="form-control" type="datetime-local" />*@
+        <div class="input-group date" id="datetimepicker1" data-target-input="nearest">
+            <input asp-for="AssignDate" type="text" class="form-control datetimepicker-input" data-target="#datetimepicker1" />
+            <div class="input-group-append" data-target="#datetimepicker1" data-toggle="datetimepicker">
+                <div class="input-group-text"><i class="far fa-calendar"></i></div>
+            </div>
+        </div>
         <span asp-validation-for="AssignDate" class="text-danger"></span>
     </div>
     <div class="form-group">
         <label asp-for="EndDate" class="control-label"></label>
-        <input asp-for="EndDate" class="form-control" type="datetime-local" />
+        @*<input asp-for="EndDate" class="form-control" type="datetime-local" />*@
+        <div class="input-group date" id="datetimepicker2" data-target-input="nearest">
+            <input asp-for="EndDate" type="text" class="form-control datetimepicker-input" data-target="#datetimepicker2" />
+            <div class="input-group-append" data-target="#datetimepicker2" data-toggle="datetimepicker">
+                <div class="input-group-text"><i class="far fa-calendar"></i></div>
+            </div>
+        </div>
         <span asp-validation-for="EndDate" class="text-danger"></span>
     </div>
     <div class="form-group">
@@ -73,39 +85,6 @@
     </div>
 </form>
 
-<div class="container">
-    <div class="row">
-        <div class="col-sm-6">
-            <div class="form-group">
-                <div class="input-group date" id="datetimepicker1" data-target-input="nearest">
-                    <input type="text" class="form-control datetimepicker-input" data-target="#datetimepicker1" />
-                    <div class="input-group-append" data-target="#datetimepicker1" data-toggle="datetimepicker">
-                        <div class="input-group-text"><i class="far fa-calendar"></i></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <script type="text/javascript">
-            $(function () {
-                $('#datetimepicker1').datetimepicker();
-            });
-        </script>
-    </div>
-</div>
-
-<div class="container">
-    <div class="row">
-        <div class="col-sm-6">
-            <input type="text" class="form-control datetimepicker-input" id="datetimepicker5" data-toggle="datetimepicker" data-target="#datetimepicker5" />
-        </div>
-        <script type="text/javascript">
-            $(function () {
-                $('#datetimepicker5').datetimepicker();
-            });
-        </script>
-    </div>
-</div>
-
 <div>
     <a class="btn btn-dark" type="button" asp-action="Index" role="button">Regresar</a>
 </div>
@@ -120,6 +99,13 @@
             });
         });
 
+        $(function () {
+            $('#datetimepicker1').datetimepicker();
+        });
+
+        $(function () {
+            $('#datetimepicker2').datetimepicker();
+        });
 
     </script>
 }

@@ -17,7 +17,7 @@
             </ul>
             <ul class="navbar-nav px-3">
                 <li class="nav-item text-nowrap">
-                    <a class="nav-link" id="login" asp-controller="Authentication" asp-action="Logoff">Cerrar Sesión</a>
+                    <a class="nav-link" id="login" asp-controller="Authentication" asp-action="Logoff">Cerrar Sesión    <i class="fas fa-sign-out-alt"></i></a>
                 </li>
             </ul>
         }
@@ -44,50 +44,53 @@
                     <div class="sidebar-sticky pt-3">
                         <ul class="nav flex-column">
                             <li class="nav-item">
-                                <a class="nav-link active" href="#">
+                                <a class="nav-link active" asp-area="" asp-controller="Tickets" asp-action="Index">
                                     <span data-feather="home"></span>
-                                    Dashboard <span class="sr-only">(current)</span>
+                                    Gestión de Tickets <span class="sr-only">(current)</span>
                                 </a>
                             </li>
                             @if (TempData["UserRole"].ToString() != "ADMIN")
                             {
                                 <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Tickets" asp-action="Index">Incidentes</a>
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Tickets" asp-action="Index"><i class="fas fa-ticket-alt"></i> Incidentes</a>
                                 </li>
                             }
                             else
                             {
                                 <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Tickets" asp-action="Index">Incidentes</a>
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Tickets" asp-action="Index"><i class="fas fa-ticket-alt"></i> Incidentes</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Applications" asp-action="Index">Aplicaciones</a>
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Applications" asp-action="Index"><i class="fas fa-desktop"></i>   Aplicaciones</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Causes" asp-action="Index">Causas</a>
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Causes" asp-action="Index"><i class="fas fa-chart-bar"></i>   Causas</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Departments" asp-action="Index">Departamentos</a>
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Departments" asp-action="Index"><i class="fas fa-building"></i>   Departamentos</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Customers" asp-action="Index">Clientes</a>
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Customers" asp-action="Index"><i class="fas fa-user-tie"></i> Clientes</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Index">Usuarios</a>
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Index"><i class="fas fa-users"></i>    Usuarios</a>
                                 </li>
                             }
 
                         </ul>
 
                         <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
-                            <span>Saved reports</span>
+                            <span>Gestión de Usuario</span>
                             <a class="d-flex align-items-center text-muted" href="#" aria-label="Add a new report">
                                 <span data-feather="plus-circle"></span>
                             </a>
                         </h6>
                         <ul class="nav flex-column mb-2">
                             <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="Users" asp-action="ChangePassword">Cambiar Contraseña</a>
+                                <a class="nav-link" asp-area="" asp-controller="Users" asp-action="ChangePassword"><i class="fas fa-key"></i>   Cambiar Contraseña</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Users" asp-action="ShowMyDataDetails"><i class="fas fa-user"></i> Mis Datos</a>
                             </li>
                         </ul>
                     </div>

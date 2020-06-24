@@ -19,8 +19,8 @@
             <button type="submit" value="Search" class="btn btn-primary">Buscar</button>
         </div>
         @*<div class="col-auto">
-            <a asp-action="Index" class="btn btn-info">Lista completa</a>
-        </div>*@
+                <a asp-action="Index" class="btn btn-info">Lista completa</a>
+            </div>*@
     </div>
 </form>
 <br />
@@ -97,12 +97,12 @@
    asp-route-pageNumber="@(Model.PageIndex - 1)"
    asp-route-currentFilter="@ViewData["CurrentFilter"]"
    class="btn btn-dark @prevDisabled">
-    Anterior
+    <i class="fas fa-backward"></i>
 </a>
 <a asp-action="Index"
    asp-route-sortOrder="@ViewData["CurrentSort"]"
    asp-route-pageNumber="@(Model.PageIndex + 1)"
    asp-route-currentFilter="@ViewData["CurrentFilter"]"
    class="btn btn-dark @nextDisabled">
-    Siguiente
+    <i class="fas fa-forward"></i>
 </a>
