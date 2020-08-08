@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -8,8 +9,10 @@ namespace UE_ManagerWebApp.Models
 {
     public class Tickets
     {
-        [Key]
+        
         [Display(Name = "ID")]
+        //[DatabaseGenerated(DatabaseGeneratedOption.None)]
+        [Key]
         public int Id { get; set; }
 
         [Display(Name = "#Incidente")]
@@ -39,13 +42,15 @@ namespace UE_ManagerWebApp.Models
         [Display(Name = "Fecha de Actualización")]
         public DateTime? UpdateDate { get; set; }
 
-        [Display(Name = "Fecha de Asignación")]
+        [Display(Name = "Usuario de Asignación")]
         public string AssignUser { get; set; }
+
+        [Display(Name = "Estado")]
+        public string Status { get; set; }
 
         [Display(Name = "Id Aplicación")]
         public int ApplicationId { get; set; }
         public Applications Application { get; set; }
-
 
         [Display(Name = "Causa Raiz")]
         public int CauseId { get; set; }

@@ -34,10 +34,10 @@ namespace UE_ManagerWebApp.Controllers
                 TempData.Keep();
                 return View(await _context.Departments.ToListAsync());
             }
-            catch (Exception)
+            catch (Exception ex)
             {
 
-                throw;
+                throw ex;
             }
             
         }

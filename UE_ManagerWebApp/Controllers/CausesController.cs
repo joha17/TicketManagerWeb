@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -113,6 +114,8 @@ namespace UE_ManagerWebApp.Controllers
 
                 if (ModelState.IsValid)
                 {
+                    causes.CreationDate = DateTime.Now;
+                    causes.CreationUser = HttpContext.Session.GetString("UserName");
                     _context.Add(causes);
                     await _context.SaveChangesAsync();
                     return RedirectToAction(nameof(Index));
@@ -184,6 +187,8 @@ namespace UE_ManagerWebApp.Controllers
                 {
                     try
                     {
+                        causes.UpdateDate = DateTime.Now;
+                        causes.UpdateUser = HttpContext.Session.GetString("UserName");
                         _context.Update(causes);
                         await _context.SaveChangesAsync();
                     }

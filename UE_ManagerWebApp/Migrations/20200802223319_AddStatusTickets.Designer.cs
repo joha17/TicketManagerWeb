@@ -10,8 +10,8 @@ using UE_ManagerWebApp.Entity;
 namespace UE_ManagerWebApp.Migrations
 {
     [DbContext(typeof(UEManagerDBContext))]
-    [Migration("20200509020215_firstMigration")]
-    partial class firstMigration
+    [Migration("20200802223319_AddStatusTickets")]
+    partial class AddStatusTickets
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -40,7 +40,7 @@ namespace UE_ManagerWebApp.Migrations
                     b.Property<string>("CreationUser")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("DepartmentId")
+                    b.Property<int>("DepartmentId")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdateDate")
@@ -159,7 +159,7 @@ namespace UE_ManagerWebApp.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("ApplicationId")
+                    b.Property<int>("ApplicationId")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("AssignDate")
@@ -168,7 +168,7 @@ namespace UE_ManagerWebApp.Migrations
                     b.Property<string>("AssignUser")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("CauseId")
+                    b.Property<int>("CauseId")
                         .HasColumnType("int");
 
                     b.Property<string>("Comment")
@@ -180,16 +180,19 @@ namespace UE_ManagerWebApp.Migrations
                     b.Property<string>("CreationUser")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("CustomerId")
+                    b.Property<int>("CustomerId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("DepartmentId")
+                    b.Property<int>("DepartmentId")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("EndDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Keyword")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Status")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("TicketNumber")
@@ -214,30 +217,76 @@ namespace UE_ManagerWebApp.Migrations
                     b.ToTable("Tickets");
                 });
 
+            modelBuilder.Entity("UE_ManagerWebApp.Models.Users", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("AccessLevel")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("EmailID")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Users");
+                });
+
             modelBuilder.Entity("UE_ManagerWebApp.Models.Applications", b =>
                 {
                     b.HasOne("UE_ManagerWebApp.Models.Departments", "Department")
                         .WithMany("Applications")
-                        .HasForeignKey("DepartmentId");
+                        .HasForeignKey("DepartmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("UE_ManagerWebApp.Models.Tickets", b =>
                 {
                     b.HasOne("UE_ManagerWebApp.Models.Applications", "Application")
                         .WithMany("Tickets")
-                        .HasForeignKey("ApplicationId");
+                        .HasForeignKey("ApplicationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("UE_ManagerWebApp.Models.Causes", "Cause")
                         .WithMany("Tickets")
-                        .HasForeignKey("CauseId");
+                        .HasForeignKey("CauseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("UE_ManagerWebApp.Models.Customers", "Customer")
                         .WithMany("Tickets")
-                        .HasForeignKey("CustomerId");
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("UE_ManagerWebApp.Models.Departments", "Department")
                         .WithMany("Tickets")
-                        .HasForeignKey("DepartmentId");
+                        .HasForeignKey("DepartmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

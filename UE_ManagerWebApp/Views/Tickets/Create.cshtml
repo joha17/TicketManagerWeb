@@ -63,6 +63,17 @@
         <span asp-validation-for="AssignUser" class="text-danger"></span>
 
     </div>
+
+    <div class="form-group">
+        <label asp-for="Status" class="control-label"></label>
+        <select asp-for="Status" class="form-control">
+            <option value="EA">En Análisis</option>
+            <option value="H">Hold</option>
+            <option value="C">Cerrado</option>
+            <option value="A">Activo</option>
+        </select>
+    </div>
+
     <div class="form-group">
         <label asp-for="CustomerId" class="control-label"></label>
         <select asp-for="CustomerId" class="form-control" asp-items="ViewBag.CustomerId"></select>

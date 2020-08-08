@@ -59,6 +59,7 @@ namespace UE_ManagerWebApp.Controllers
                     SetRole _setRole = new SetRole();
 
                     TempData["UserRole"] = _setRole.setRole(dbUser.AccessLevel.ToString());
+                    HttpContext.Session.SetString("Username", login.Username);
 
                     return Redirect("~/Tickets/Index");
                     //return View("Views/Home/Index.cshtml");
