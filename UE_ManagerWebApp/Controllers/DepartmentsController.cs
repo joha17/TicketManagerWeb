@@ -28,16 +28,12 @@ namespace UE_ManagerWebApp.Controllers
         {
             try
             {
-                string role;
-                if (TempData["UserRole"] != null)
-                    role = TempData["UserRole"] as string;
-                TempData.Keep();
                 return View(await _context.Departments.ToListAsync());
             }
-            catch (Exception ex)
+            catch (Exception)
             {
 
-                throw ex;
+                throw;
             }
             
         }
@@ -48,11 +44,6 @@ namespace UE_ManagerWebApp.Controllers
         {
             try
             {
-                string role;
-                if (TempData["UserRole"] != null)
-                    role = TempData["UserRole"] as string;
-                TempData.Keep();
-
                 if (id == null)
                 {
                     return NotFound();
@@ -80,10 +71,6 @@ namespace UE_ManagerWebApp.Controllers
         {
             try
             {
-                string role;
-                if (TempData["UserRole"] != null)
-                    role = TempData["UserRole"] as string;
-                TempData.Keep();
                 return View();
             }
             catch (Exception)
@@ -104,12 +91,10 @@ namespace UE_ManagerWebApp.Controllers
         {
             try
             {
-                string role;
-                if (TempData["UserRole"] != null)
-                    role = TempData["UserRole"] as string;
-                TempData.Keep();
                 if (ModelState.IsValid)
                 {
+                    departments.Creation_Date = DateTime.Now;
+                    departments.Create_User = HttpContext.User.Claims.FirstOrDefault(c => c.Type == "Username").Value.ToString();
                     _context.Add(departments);
                     await _context.SaveChangesAsync();
                     return RedirectToAction(nameof(Index));
@@ -130,11 +115,6 @@ namespace UE_ManagerWebApp.Controllers
         {
             try
             {
-                string role;
-                if (TempData["UserRole"] != null)
-                    role = TempData["UserRole"] as string;
-                TempData.Keep();
-
                 if (id == null)
                 {
                     return NotFound();
@@ -164,10 +144,6 @@ namespace UE_ManagerWebApp.Controllers
         {
             try
             {
-                string role;
-                if (TempData["UserRole"] != null)
-                    role = TempData["UserRole"] as string;
-                TempData.Keep();
                 if (id != departments.Id)
                 {
                     return NotFound();
@@ -177,6 +153,8 @@ namespace UE_ManagerWebApp.Controllers
                 {
                     try
                     {
+                        departments.Update_Date = DateTime.Now;
+                        departments.Update_User = HttpContext.User.Claims.FirstOrDefault(c => c.Type == "Username").Value.ToString();
                         _context.Update(departments);
                         await _context.SaveChangesAsync();
                     }
@@ -208,10 +186,6 @@ namespace UE_ManagerWebApp.Controllers
         {
             try
             {
-                string role;
-                if (TempData["UserRole"] != null)
-                    role = TempData["UserRole"] as string;
-                TempData.Keep();
                 if (id == null)
                 {
                     return NotFound();
@@ -242,10 +216,6 @@ namespace UE_ManagerWebApp.Controllers
         {
             try
             {
-                string role;
-                if (TempData["UserRole"] != null)
-                    role = TempData["UserRole"] as string;
-                TempData.Keep();
                 var departments = await _context.Departments.FindAsync(id);
                 _context.Departments.Remove(departments);
                 await _context.SaveChangesAsync();

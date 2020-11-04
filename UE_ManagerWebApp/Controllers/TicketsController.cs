@@ -2,17 +2,14 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using ExcelDataReader;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using NPOI.HSSF.UserModel;
-using NPOI.SS.UserModel;
-using NPOI.XSSF.UserModel;
 using UE_ManagerWebApp.CustomAttributes;
 using UE_ManagerWebApp.Entity;
 using UE_ManagerWebApp.Models;
@@ -24,14 +21,17 @@ namespace UE_ManagerWebApp.Controllers
     {
         private readonly UEManagerDBContext _context;
         private readonly AuthDBContext _contextUsers;
-        
-        private IWebHostEnvironment _hostingEnvironment;
 
-        public TicketsController(UEManagerDBContext context, AuthDBContext contextUsers, IWebHostEnvironment hostingEnvironment)
+        [TempData]
+        public int countTicketsTotal { get; set; }
+
+        [TempData]
+        public int countMyTicketsTotal { get; set; }
+
+        public TicketsController(UEManagerDBContext context, AuthDBContext contextUsers)
         {
             _context = context;
             _contextUsers = contextUsers;
-            _hostingEnvironment = hostingEnvironment;
         }
 
         // GET: Tickets
@@ -40,10 +40,10 @@ namespace UE_ManagerWebApp.Controllers
         {
             try
             {
-                string role;
-                if (TempData["UserRole"] != null)
-                    role = TempData["UserRole"] as string;
-                TempData.Keep();
+                //string role;
+                //if (TempData["UserRole"] != null)
+                //    role = TempData["UserRole"] as string;
+                //TempData.Keep();
 
                 ViewData["CurrentSort"] = sortOrder;
                 ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
@@ -85,6 +85,67 @@ namespace UE_ManagerWebApp.Controllers
                 foreach (var claim in HttpContext.User.Claims)
                     Console.WriteLine($"ClaimType:[{claim.Type}], ClaimValue:[{claim.Value}], Issuer:[{claim.Issuer}]");
 
+                var user = HttpContext.User.Claims.FirstOrDefault(c => c.Type == "Username");
+                var username = user.Value.ToString();
+                var roleuser = HttpContext.User.Claims.FirstOrDefault(c => c.Type == "AccessLevel").Value.ToString();
+
+                countTicketsTotal = _context.Tickets.Count();
+                countMyTicketsTotal = _context.Tickets.Where(x => x.AssignUser == username).Count();
+
+
+                return View(await PaginatedList<Tickets>.CreateAsync(tickets.AsNoTracking(), pageNumber ?? 1, pageSize));
+            }
+            catch (Exception ex )
+            {
+
+                throw ex;
+            }
+        }
+
+        public async Task<IActionResult> MyTickets(string sortOrder, string currentFilter, string searchString, int? pageNumber)
+        {
+            try
+            {
+                ViewData["CurrentSort"] = sortOrder;
+                ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+                ViewData["DateSortParm"] = sortOrder == "Date" ? "date_desc" : "Date";
+                if (searchString != null)
+                {
+                    pageNumber = 1;
+                }
+                else
+                {
+                    searchString = currentFilter;
+                }
+
+                ViewData["CurrentFilter"] = searchString;
+                var username = HttpContext.User.Claims.FirstOrDefault(c => c.Type == "Username").Value.ToString();
+                var tickets = from s in _context.Tickets.Include(t => t.Application).Include(c => c.Cause).Include(d => d.Department).Include(k => k.Customer).Where(x => x.AssignUser == username)
+                              select s;
+                if (!String.IsNullOrEmpty(searchString))
+                {
+                    tickets = tickets.Where(s => s.TicketNumber.Contains(searchString));
+                }
+                switch (sortOrder)
+                {
+                    case "name_desc":
+                        tickets = tickets.OrderByDescending(s => s.TicketNumber);
+                        break;
+                    case "Date":
+                        tickets = tickets.OrderBy(s => s.CreationDate);
+                        break;
+                    case "date_desc":
+                        tickets = tickets.OrderByDescending(s => s.CreationDate);
+                        break;
+                    default:
+                        tickets = tickets.OrderBy(s => s.TicketNumber);
+                        break;
+                }
+                int pageSize = 10;
+
+                countTicketsTotal = _context.Tickets.Count();
+                countMyTicketsTotal = _context.Tickets.Where(x => x.AssignUser == username).Count();
+
                 return View(await PaginatedList<Tickets>.CreateAsync(tickets.AsNoTracking(), pageNumber ?? 1, pageSize));
             }
             catch (Exception)
@@ -100,11 +161,6 @@ namespace UE_ManagerWebApp.Controllers
         {
             try
             {
-                string role;
-                if (TempData["UserRole"] != null)
-                    role = TempData["UserRole"] as string;
-                TempData.Keep();
-
                 if (id == null)
                 {
                     return NotFound();
@@ -117,12 +173,15 @@ namespace UE_ManagerWebApp.Controllers
                     return NotFound();
                 }
 
+                var ticketLogs = _context.TicketLog.Where(x => x.TicketNumber == Convert.ToInt32(tickets.TicketNumber)).ToList();
+                ViewData["TicketLog"] = ticketLogs;
+
                 return View(tickets);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
 
-                throw;
+                throw ex;
             }
         }
 
@@ -132,11 +191,6 @@ namespace UE_ManagerWebApp.Controllers
         {
             try
             {
-                string role;
-                if (TempData["UserRole"] != null)
-                    role = TempData["UserRole"] as string;
-                TempData.Keep();
-
                 ViewData["ApplicationId"] = new SelectList(_context.Applications, "Id", "ApplicationName");
                 ViewData["DepartmentId"] = new SelectList(_context.Departments, "Id", "Name");
                 ViewData["CauseId"] = new SelectList(_context.Causes, "Id", "Description");
@@ -160,15 +214,10 @@ namespace UE_ManagerWebApp.Controllers
         {
             try
             {
-                string role;
-                if (TempData["UserRole"] != null)
-                    role = TempData["UserRole"] as string;
-                TempData.Keep();
-
                 if (ModelState.IsValid)
                 {
                     tickets.CreationDate = DateTime.Now;
-                    tickets.CreationUser = HttpContext.Session.GetString("Username");
+                    tickets.CreationUser = HttpContext.User.Claims.FirstOrDefault(c => c.Type == "Username").Value.ToString();
                     _context.Add(tickets);
                     await _context.SaveChangesAsync();
                     return RedirectToAction(nameof(Index));
@@ -192,11 +241,6 @@ namespace UE_ManagerWebApp.Controllers
         {
             try
             {
-                string role;
-                if (TempData["UserRole"] != null)
-                    role = TempData["UserRole"] as string;
-                TempData.Keep();
-
                 if (id == null)
                 {
                     return NotFound();
@@ -207,10 +251,19 @@ namespace UE_ManagerWebApp.Controllers
                 {
                     return NotFound();
                 }
+
+                string lsticketNumbertemp;
+                string lsassingUsertemp;
+                if (TempData["TicketNumber"] != null && TempData["AssignUser"] != null)
+                    lsticketNumbertemp = TempData["TicketNumber"] as string;
+                    lsassingUsertemp = TempData["AssignUser"] as string;
+
                 ViewData["ApplicationId"] = new SelectList(_context.Applications, "Id", "ApplicationName", tickets.ApplicationId);
                 ViewData["DepartmentId"] = new SelectList(_context.Departments, "Id", "Name", tickets.DepartmentId);
                 ViewData["CauseId"] = new SelectList(_context.Causes, "Id", "Description", tickets.CauseId);
                 ViewData["CustomerId"] = new SelectList(_context.Customers, "Id", "CustomerName", tickets.CustomerId);
+                TempData["TicketNumber"] = tickets.TicketNumber;
+                TempData["AssignUser"] = tickets.AssignUser;
                 return View(tickets);
             }
             catch (Exception)
@@ -229,11 +282,6 @@ namespace UE_ManagerWebApp.Controllers
         {
             try
             {
-                string role;
-                if (TempData["UserRole"] != null)
-                    role = TempData["UserRole"] as string;
-                TempData.Keep();
-
                 if (id != tickets.Id)
                 {
                     return NotFound();
@@ -244,7 +292,7 @@ namespace UE_ManagerWebApp.Controllers
                     try
                     {
                         tickets.UpdateDate = DateTime.Now;
-                        tickets.UpdateUser = "jcervantes";
+                        tickets.UpdateUser = HttpContext.User.Claims.FirstOrDefault(c => c.Type == "Username").Value.ToString();
                         _context.Update(tickets);
                         await _context.SaveChangesAsync();
                     }
@@ -265,6 +313,7 @@ namespace UE_ManagerWebApp.Controllers
                 ViewData["DepartmentId"] = new SelectList(_context.Departments, "Id", "Name", tickets.DepartmentId);
                 ViewData["CauseId"] = new SelectList(_context.Causes, "Id", "Description", tickets.CauseId);
                 ViewData["CustomerId"] = new SelectList(_context.Customers, "Id", "CustomerName", tickets.CustomerId);
+                
                 return View(tickets);
             }
             catch (Exception)
@@ -280,10 +329,6 @@ namespace UE_ManagerWebApp.Controllers
         {
             try
             {
-                string role;
-                if (TempData["UserRole"] != null)
-                    role = TempData["UserRole"] as string;
-                TempData.Keep();
                 if (id == null)
                 {
                     return NotFound();
@@ -312,10 +357,6 @@ namespace UE_ManagerWebApp.Controllers
         {
             try
             {
-                string role;
-                if (TempData["UserRole"] != null)
-                    role = TempData["UserRole"] as string;
-                TempData.Keep();
                 var tickets = await _context.Tickets.FindAsync(id);
                 _context.Tickets.Remove(tickets);
                 await _context.SaveChangesAsync();
@@ -328,256 +369,251 @@ namespace UE_ManagerWebApp.Controllers
             }
         }
 
-        public ActionResult ImportExcel()
-        {
-            string role;
-            if (TempData["UserRole"] != null)
-                role = TempData["UserRole"] as string;
-            TempData.Keep();
-            return View();
-        }
-
-        public async Task<IActionResult> Import (Tickets tickets)
-        {
-            string role;
-            if (TempData["UserRole"] != null)
-                role = TempData["UserRole"] as string;
-            TempData.Keep();
-
-            IFormFile file = Request.Form.Files[0];
-            string folderName = "UploadExcel";
-            string webRootPath = _hostingEnvironment.WebRootPath;
-            string newPath = Path.Combine(webRootPath, folderName);
-
-            StringBuilder sb = new StringBuilder();
-            List<string> listExcel = new List<string>();
-            if (!Directory.Exists(newPath))
-            {
-                Directory.CreateDirectory(newPath);
-            }
-            procExcel(newPath, file, tickets);
-            if (file.Length > 0)
-            {
-                string sFileExtension = Path.GetExtension(file.FileName).ToLower();
-                ISheet sheet;
-                string fullPath = Path.Combine(newPath, file.FileName);
-                using (var stream = new FileStream(fullPath, FileMode.Create))
-                {
-                    file.CopyTo(stream);
-                    stream.Position = 0;
-                    if (sFileExtension == ".xls")
-                    {
-                        HSSFWorkbook hssfwb = new HSSFWorkbook(stream); //This will read the Excel 97-2000 formats  
-                        sheet = hssfwb.GetSheetAt(0); //get first sheet from workbook  
-                    }
-                    else
-                    {
-                        XSSFWorkbook hssfwb = new XSSFWorkbook(stream); //This will read 2007 Excel format  
-                        sheet = hssfwb.GetSheetAt(0); //get first sheet from workbook   
-                    }
-                    IRow headerRow = sheet.GetRow(0); //Get Header Row
-                    int cellCount = headerRow.LastCellNum;
-                    for (int j = 0; j < cellCount; j++)
-                    {
-                        NPOI.SS.UserModel.ICell cell = headerRow.GetCell(j);
-                        if (cell == null || string.IsNullOrWhiteSpace(cell.ToString())) continue;
-                    }
-                    for (int i = (sheet.FirstRowNum + 1); i <= sheet.LastRowNum; i++) //Read Excel File
-                    {
-                        IRow row = sheet.GetRow(i);
-                        if (row == null) continue;
-                        if (row.Cells.All(d => d.CellType == CellType.Blank)) continue;
-                        for (int j = row.FirstCellNum; j < cellCount; j++)
-                        {
-                            if (row.GetCell(j) != null)
-                            {
-                                //listExcel.Add(row.GetCell(j).ToString());
-
-                            }
-                        }
-                    }
-                }
-            }
-
-            return this.Content(sb.ToString());
-        }
-
-        public static List<List<T>> splitList<T>(List<T> locations, int nSize = 31)
-        {
-            var list = new List<List<T>>();
-
-            for (int i = 0; i < locations.Count; i += nSize)
-            {
-                list.Add(locations.GetRange(i, Math.Min(nSize, locations.Count - i)));
-            }
-
-            return list;
-        }
-
-        public async Task<Tickets> procExcel(string fileName, IFormFile file, Tickets tickets)
+        [HttpGet, ActionName("Upload")]
+        public IActionResult Upload(List<Tickets> tickets = null)
         {
             try
             {
-                string fullPath = Path.Combine(fileName, file.FileName);
-                List<Tickets> listExcel = new List<Tickets>();
-                using (var fs = new FileStream(fullPath, FileMode.Create))
-                {
-                    IWorkbook workbook = null;
-                    file.CopyTo(fs);
-                    fs.Position = 0;
-                    if (file.FileName.IndexOf(".xlsx") > 0)
-                    {
-                        workbook = new XSSFWorkbook(fs);
-                        //sheet = hssfwb.GetSheetAt(0);
-                    }
-
-                    else if (file.FileName.IndexOf(".xls") > 0)
-                    {
-                        workbook = new HSSFWorkbook(fs);
-                        //sheet = hssfwb.GetSheetAt(0);
-                    }
-
-                    //First sheet
-                    ISheet sheet = workbook.GetSheetAt(0);
-                    if (sheet != null)
-                    {
-                        int rowCount = sheet.LastRowNum; // This may not be valid row count.
-                                                         // If first row is table head, i starts from 1
-                        for (int i = 1; i <= rowCount; i++)
-                        {
-                            IRow curRow = sheet.GetRow(i);
-                            // Works for consecutive data. Use continue otherwise 
-                            if (curRow == null)
-                            {
-                                // Valid row count
-                                rowCount = i - 1;
-                                break;
-                            }
-                            var ticketNumber = from t in _context.Tickets
-                                               where t.TicketNumber.Equals(curRow.GetCell(1).StringCellValue.Trim())
-                                               select t.TicketNumber;
-
-
-                            if (ticketNumber.FirstOrDefault() == null)
-                            {
-                                tickets.TicketNumber = curRow.GetCell(1).StringCellValue.Trim();
-                                tickets.CreationDate = DateTime.Now;
-                                tickets.Comment = curRow.GetCell(4).StringCellValue.Trim().Replace("\n", "").Replace("\r", "");
-                                tickets.CreationUser = HttpContext.Session.GetString("UserName");
-                                var date1 = GetFormattedCellValue(curRow.GetCell(7), null);
-                                tickets.CreationDate = Convert.ToDateTime(date1);
-                                var date2 = GetFormattedCellValue(curRow.GetCell(8), null);
-                                tickets.AssignDate = Convert.ToDateTime(date2);
-
-                                string UserName = string.Empty;
-                                foreach (var item in _contextUsers.Users)
-                                {
-                                    if (curRow.GetCell(10).StringCellValue.Trim().Equals(item.FirstName + " " + item.LastName))
-                                    {
-                                        UserName = item.Username;
-                                    }
-                                }
-                                tickets.AssignUser = UserName;
-
-                                string customerName = string.Empty;
-                                foreach (var item in _context.Customers)
-                                {
-                                    if (item.CustomerName.Contains(curRow.GetCell(3).StringCellValue.Trim().ToString().ToUpper()))
-                                    {
-                                        customerName = item.CustomerCode;
-                                    }
-                                }
-                                if (customerName == "")
-                                {
-                                    customerName = "NA";
-                                }
-                                tickets.CustomerId = (from customer in _context.Customers
-                                                      where customer.CustomerCode.Equals(customerName)
-                                                      select customer.Id).FirstOrDefault();
-                                tickets.Status = "A";
-                                tickets.ApplicationId = 425;
-                                tickets.DepartmentId = 1;
-                                tickets.CauseId = 16;
-
-                                using (var context = new UEManagerDBContext)
-                                {
-                                    context.Tickets.Add(tickets);
-                                    try
-                                    {
-                                        // using SSMS, manually start a transaction in your db to force a timeout
-                                        context.SaveChanges();
-                                    }
-                                    catch (Exception)
-                                    {
-                                        // catch the time out exception
-                                    }
-                                    // stop the transaction in SSMS
-                                    context.Tickets.Add(tickets);
-                                    context.SaveChanges(); // this would cause the exception
-                                }
-
-                                //_context.Add(tickets);
-                                //await _context.SaveChangesAsync();
-                                // Get data from the 4th column (4th cell of each row)
-                                //var cellValue = curRow.GetCell(3).StringCellValue.Trim();
-                                //Console.WriteLine(cellValue);
-                            }
-                        }
-                    }
-                }
-                return new Tickets();
+                tickets = tickets == null ? new List<Tickets>() : tickets;
+                return View(tickets);
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                throw e;
+
+                throw;
             }
+            
         }
 
-        public static string GetFormattedCellValue(ICell cell, IFormulaEvaluator eval = null)
+        [HttpPost]
+        public IActionResult Upload(IFormFile file, [FromServices] IHostingEnvironment hostingEnvironment)
         {
-            if (cell != null)
+            try
             {
-                switch (cell.CellType)
+                string filename = $"{hostingEnvironment.WebRootPath}\\files\\{file.FileName}";
+                using (FileStream fileStream = System.IO.File.Create(filename))
                 {
-                    case CellType.String:
-                        return cell.StringCellValue;
+                    file.CopyTo(fileStream);
+                    fileStream.Flush();
+                }
+                var excelTickets = this.getTicketsList(file.FileName);
+                
+                List<Users> allUsers = _contextUsers.Users.ToList();
 
-                    case CellType.Numeric:
-                        if (DateUtil.IsCellDateFormatted(cell))
+                foreach (var ticket in excelTickets)
+                {
+                    foreach (var user in allUsers)
+                    {
+                        if (ticket.AssignUser.Contains(user.LastName))
                         {
-                            try
-                            {
-                                return cell.DateCellValue.ToString();
-                            }
-                            catch (NullReferenceException)
-                            {
-                                return DateTime.FromOADate(cell.NumericCellValue).ToString();
-                            }
+                            ticket.AssignUser = user.Username;
                         }
-                        else
+                    }
+                }
+                return Upload(excelTickets);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            
+        }
+
+        private List<Tickets> getTicketsList(string fname)
+        {
+            List<Tickets> tickets = new List<Tickets>();
+            List<string> header = new List<string>();
+            var fileName = $"{Directory.GetCurrentDirectory()}{@"\wwwroot\files"}" + "\\" + fname;
+            System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+
+            using (var stream = System.IO.File.Open(fileName, FileMode.Open, FileAccess.Read))
+            {
+                using (var reader=ExcelReaderFactory.CreateReader(stream))
+                {
+                    while (reader.Read())
+                    {
+                        if (reader.GetFieldType(8) != typeof(string))
                         {
-                            return cell.NumericCellValue.ToString();
+                            tickets.Add(new Tickets()
+                            {
+                                TicketNumber = reader.GetValue(1).ToString(),
+                                Keyword = reader.GetValue(3).ToString(),
+                                AssignDate = reader.GetDateTime(8),
+                                Comment = reader.GetValue(4).ToString(),
+                                AssignUser = reader.GetValue(10).ToString(),
+                                CreationDate = reader.GetDateTime(7),
+                                UpdateDate = Convert.ToDateTime(reader.GetValue(17).ToString())
+                            });
                         }
-
-                    case CellType.Boolean:
-                        return cell.BooleanCellValue ? "TRUE" : "FALSE";
-
-                    case CellType.Formula:
-                        if (eval != null)
-                            return GetFormattedCellValue(eval.EvaluateInCell(cell));
-                        else
-                            return cell.CellFormula;
-
-                    case CellType.Error:
-                        return FormulaError.ForInt(cell.ErrorCellValue).String;
+                    }
                 }
             }
-            // null or blank cell, or unknown cell type
-            return string.Empty;
+            return tickets;
         }
-   
 
-    private bool TicketsExists(int id)
+        private static ExcelDataSetConfiguration GetDataSetConfig()
+        {
+            return new ExcelDataSetConfiguration
+            {
+                ConfigureDataTable = _ => new ExcelDataTableConfiguration()
+                {
+                    UseHeaderRow = true,
+
+                    // Gets or sets a callback to determine which row is the header row. 
+                    // Only called when UseHeaderRow = true.
+                    ReadHeaderRow = (rowReader) => {
+                        // F.ex skip the first row and use the 2nd row as column headers:
+                        rowReader.Read();
+                    }
+                }
+            };
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ImportData(List<string> rows)
+        {
+            try
+            {
+                //_context.Add(tickets);
+                //await _context.SaveChangesAsync();
+                //return RedirectToAction(nameof(Upload));
+                List<Tickets> allTickets = _context.Tickets.ToList();
+                List<Tickets> tickets = new List<Tickets>();
+                List<Tickets> filterTicketsList = new List<Tickets>();
+                rows.ForEach(x =>
+                {
+                    var row = x.Split('|');
+                    tickets.Add(new Tickets()
+                    {
+                        TicketNumber = row[0],
+                        AssignDate = Convert.ToDateTime(row[1]),
+                        Comment = row[2],
+                        AssignUser = row[3],
+                        CreationDate = Convert.ToDateTime(row[4]),
+                        UpdateDate = Convert.ToDateTime(row[5])
+                    });
+                });
+
+                foreach (var ticket in tickets)
+                {
+                    if (!allTickets.Exists(item => item.TicketNumber == ticket.TicketNumber))
+                    {
+                        filterTicketsList.Add(ticket);
+                    }
+                }
+                //Estos valores 425,16 y 154 estan quemados, porque significan en analisis
+                foreach (var item in filterTicketsList)
+                {
+                    item.ApplicationId = 425;
+                    item.CauseId = 16;
+                    item.CustomerId = 154;
+                    item.DepartmentId = 6;
+                    item.Status = "A";
+                    item.CreationUser = HttpContext.User.Claims.FirstOrDefault(c => c.Type == "Username").Value.ToString();
+                    _context.Add(item);
+                }
+
+                await _context.SaveChangesAsync();
+
+                return Json(true);
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
+
+        // GET: Tickets/Delete/5
+        [Microsoft.AspNetCore.Authorization.Authorize]
+        public async Task<IActionResult> Transfer()
+        {
+            try
+            {
+                string lsticketNumbertemp;
+                if (TempData["TicketNumber"] != null)
+                    lsticketNumbertemp = TempData["UserRole"] as string;
+
+                TempData.Keep();
+
+                var tickets = await _context.Tickets
+                    .FirstOrDefaultAsync(m => m.TicketNumber == TempData["TicketNumber"].ToString());
+                if (tickets == null)
+                {
+                    return NotFound();
+                }
+                
+                ViewData["Usernames"] = new SelectList(_contextUsers.Users.OrderBy(x => x.Username), "Username", "Username");
+                ViewBag.Username = tickets.AssignUser;
+                ViewBag.TicketNumber = tickets.TicketNumber;
+
+                return View();
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Transfer(int id,Tickets tickets, TicketLog ticketLog)
+        {
+            try
+            {
+                if (id != tickets.Id)
+                {
+                    return NotFound();
+                }
+
+                if (ModelState.IsValid)
+                {
+                    try
+                    {
+                        var ticketsEdit = await _context.Tickets
+                        .FirstOrDefaultAsync(m => m.TicketNumber == tickets.TicketNumber);
+                        if (tickets == null)
+                        {
+                            return NotFound();
+                        }
+                        ticketsEdit.UpdateDate = DateTime.Now;
+                        ticketsEdit.UpdateUser = tickets.UpdateUser;
+                        ticketsEdit.AssignUser = ticketLog.DestinationUser;
+                        _context.Update(ticketsEdit);
+                        await _context.SaveChangesAsync();
+
+                        ticketLog.CreationDate = DateTime.Now;
+                        _context.Add(ticketLog);
+                        await _context.SaveChangesAsync();
+                    }
+                    catch (DbUpdateConcurrencyException)
+                    {
+                        if (!TicketsExists(tickets.Id))
+                        {
+                            return NotFound();
+                        }
+                        else
+                        {
+                            throw;
+                        }
+                    }
+                    return RedirectToAction(nameof(Index));
+                }
+
+                ViewData["Username"] = new SelectList(_contextUsers.Users.OrderBy(x => x.Username), "Username", "Username");
+
+                return View(tickets);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        private bool TicketsExists(int id)
         {
             return _context.Tickets.Any(e => e.Id == id);
         }

@@ -22,16 +22,11 @@ namespace UE_ManagerWebApp.Controllers
         }
 
         // GET: Users
-        [Authorize]
+        [Microsoft.AspNetCore.Authorization.Authorize(Policy = "IsAdmin")]
         public async Task<IActionResult> Index()
         {
             try
             {
-                string role;
-                if (TempData["UserRole"] != null)
-                    role = TempData["UserRole"] as string;
-
-                TempData.Keep();
                 return View(await _context.Users.ToListAsync());
             }
             catch (Exception)
@@ -54,12 +49,6 @@ namespace UE_ManagerWebApp.Controllers
         {
             try
             {
-                string role;
-                if (TempData["UserRole"] != null)
-                    role = TempData["UserRole"] as string;
-
-                TempData.Keep();
-
                 if (id == null)
                 {
                     return NotFound();
@@ -87,12 +76,6 @@ namespace UE_ManagerWebApp.Controllers
         {
             try
             {
-                string role;
-                if (TempData["UserRole"] != null)
-                    role = TempData["UserRole"] as string;
-
-                TempData.Keep();
-                
                 var claimsIdentity = User.Identity as ClaimsIdentity;
 
                 // alternatively
@@ -136,16 +119,11 @@ namespace UE_ManagerWebApp.Controllers
         }
 
         // GET: Users/Create
-        [Authorize]
+        [Microsoft.AspNetCore.Authorization.Authorize(Policy = "IsAdmin")]
         public IActionResult Create()
         {
             try
             {
-                string role;
-                if (TempData["UserRole"] != null)
-                    role = TempData["UserRole"] as string;
-
-                TempData.Keep();
                 return View();
             }
             catch (Exception)
@@ -161,6 +139,7 @@ namespace UE_ManagerWebApp.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Microsoft.AspNetCore.Authorization.Authorize(Policy = "IsAdmin")]
         public async Task<IActionResult> Create([Bind("Id,Username,Password,FirstName,LastName,EmailID,AccessLevel,ReadOnly")] Users users)
         {
             try
@@ -189,17 +168,11 @@ namespace UE_ManagerWebApp.Controllers
         }
 
         // GET: Users/Edit/5
-        [Authorize]
+        [Microsoft.AspNetCore.Authorization.Authorize(Policy = "IsAdmin")]
         public async Task<IActionResult> Edit(int? id)
         {
             try
             {
-                string role;
-                if (TempData["UserRole"] != null)
-                    role = TempData["UserRole"] as string;
-
-                TempData.Keep();
-
                 if (id == null)
                 {
                     return NotFound();
@@ -225,16 +198,11 @@ namespace UE_ManagerWebApp.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Microsoft.AspNetCore.Authorization.Authorize(Policy = "IsAdmin")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Username,Password,FirstName,LastName,EmailID,AccessLevel,ReadOnly")] Users users)
         {
             try
             {
-                string role;
-                if (TempData["UserRole"] != null)
-                    role = TempData["UserRole"] as string;
-
-                TempData.Keep();
-
                 if (id != users.Id)
                 {
                     return NotFound();
@@ -275,11 +243,6 @@ namespace UE_ManagerWebApp.Controllers
         {
             try
             {
-                string role;
-                if (TempData["UserRole"] != null)
-                    role = TempData["UserRole"] as string;
-                TempData.Keep();
-
                 return View();
             }
             catch (Exception)
@@ -296,12 +259,6 @@ namespace UE_ManagerWebApp.Controllers
         {
             try
             {
-                string role;
-                if (TempData["UserRole"] != null)
-                    role = TempData["UserRole"] as string;
-
-                TempData.Keep();
-
                 if (ModelState.IsValid)
                 {
                     
@@ -335,16 +292,11 @@ namespace UE_ManagerWebApp.Controllers
             }
         }
 
+        [Microsoft.AspNetCore.Authorization.Authorize(Policy = "IsAdmin")]
         public async Task<IActionResult> EditMyData(int? id)
         {
             try
             {
-                string role;
-                if (TempData["UserRole"] != null)
-                    role = TempData["UserRole"] as string;
-
-                TempData.Keep();
-
                 var claimsIdentity = User.Identity as ClaimsIdentity;
                 string username = claimsIdentity.FindFirst("Username").Value;
 
@@ -380,16 +332,11 @@ namespace UE_ManagerWebApp.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Microsoft.AspNetCore.Authorization.Authorize(Policy = "IsAdmin")]
         public async Task<IActionResult> EditMyData(int id, [Bind("Id,Username,Password,FirstName,LastName,EmailID,AccessLevel,ReadOnly")] Users users)
         {
             try
             {
-                string role;
-                if (TempData["UserRole"] != null)
-                    role = TempData["UserRole"] as string;
-
-                TempData.Keep();
-
                 if (id != users.Id)
                 {
                     return NotFound();
@@ -427,17 +374,11 @@ namespace UE_ManagerWebApp.Controllers
         }
 
         // GET: Users/Delete/5
-        [Authorize]
+        [Microsoft.AspNetCore.Authorization.Authorize(Policy = "IsAdmin")]
         public async Task<IActionResult> Delete(int? id)
         {
             try
             {
-                string role;
-                if (TempData["UserRole"] != null)
-                    role = TempData["UserRole"] as string;
-
-                TempData.Keep();
-
                 if (id == null)
                 {
                     return NotFound();
@@ -464,16 +405,11 @@ namespace UE_ManagerWebApp.Controllers
         // POST: Users/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Microsoft.AspNetCore.Authorization.Authorize(Policy = "IsAdmin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             try
             {
-                string role;
-                if (TempData["UserRole"] != null)
-                    role = TempData["UserRole"] as string;
-
-                TempData.Keep();
-
                 var users = await _context.Users.FindAsync(id);
                 _context.Users.Remove(users);
                 await _context.SaveChangesAsync();

@@ -20,10 +20,18 @@ namespace UE_ManagerWebApp.Controllers
     {
 
         private readonly AuthDBContext _context;
+        private readonly UEManagerDBContext _contextUE;
 
-        public AuthenticationController(AuthDBContext context)
+        [TempData]
+        public int countTicketsTotal { get; set; }
+
+        [TempData]
+        public int countMyTicketsTotal { get; set; }
+
+        public AuthenticationController(AuthDBContext context, UEManagerDBContext contextUE)
         {
             _context = context;
+            _contextUE = contextUE;
         }
 
         public IActionResult LoginUser()
@@ -56,10 +64,12 @@ namespace UE_ManagerWebApp.Controllers
                     HttpContext.Session.SetString("JWToken", userToken);
                     ViewBag.Message = "Welcome!";
 
-                    SetRole _setRole = new SetRole();
+                    //SetRole _setRole = new SetRole();
 
-                    TempData["UserRole"] = _setRole.setRole(dbUser.AccessLevel.ToString());
-                    HttpContext.Session.SetString("Username", login.Username);
+                    //TempData["UserRole"] = _setRole.setRole(dbUser.AccessLevel.ToString());
+
+                    countTicketsTotal = _contextUE.Tickets.Count();
+                    countMyTicketsTotal = _contextUE.Tickets.Where(x=> x.AssignUser == login.Username).Count();
 
                     return Redirect("~/Tickets/Index");
                     //return View("Views/Home/Index.cshtml");
@@ -89,65 +99,65 @@ namespace UE_ManagerWebApp.Controllers
             }
             
         }
-        public IActionResult NoPermission()
-        {
-            try
-            {
-                string role;
-                if (TempData["UserRole"] != null)
-                    role = TempData["UserRole"] as string;
-                TempData.Keep();
+        //public IActionResult NoPermission()
+        //{
+        //    try
+        //    {
+        //        string role;
+        //        if (TempData["UserRole"] != null)
+        //            role = TempData["UserRole"] as string;
+        //        TempData.Keep();
 
-                ViewBag.UserRole = GetRole();
-                return View("NoPermission");
-            }
-            catch (Exception)
-            {
+        //        ViewBag.UserRole = GetRole();
+        //        return View("NoPermission");
+        //    }
+        //    catch (Exception)
+        //    {
 
-                throw;
-            }
-        }
+        //        throw;
+        //    }
+        //}
 
-        private string setRole(string accessLevel) 
-        {
-            try
-            {
-                if (accessLevel.Equals("ADMIN"))
-                {
-                    return "ADMIN";
-                }
-                if (accessLevel.Equals("SUPERVISOR"))
-                {
-                    return "SUPERVISOR";
-                }
-                if (accessLevel.Equals("LEAD"))
-                {
-                    return "LEAD";
-                }
-                else
-                {
-                    return "ANALYST";
-                }
-            }
-            catch (Exception)
-            {
+        //private string setRole(string accessLevel) 
+        //{
+        //    try
+        //    {
+        //        if (accessLevel.Equals("ADMIN"))
+        //        {
+        //            return "ADMIN";
+        //        }
+        //        if (accessLevel.Equals("SUPERVISOR"))
+        //        {
+        //            return "SUPERVISOR";
+        //        }
+        //        if (accessLevel.Equals("LEAD"))
+        //        {
+        //            return "LEAD";
+        //        }
+        //        else
+        //        {
+        //            return "ANALYST";
+        //        }
+        //    }
+        //    catch (Exception)
+        //    {
 
-                throw;
-            }
-        }
+        //        throw;
+        //    }
+        //}
 
 
-        private string GetRole()
-        {
-            if (this.HavePermission(Roles.ADMIN))
-                return " - Admistrador";
-            if (this.HavePermission(Roles.SUPERVISOR))
-                return " - Supervisor";
-            if (this.HavePermission(Roles.ANALYST))
-                return " - Analista";
-            if (this.HavePermission(Roles.LEAD))
-                return " - Lider Técnico";
-            return null;
-        }
+        //private string GetRole()
+        //{
+        //    if (this.HavePermission(Roles.ADMIN))
+        //        return " - Admistrador";
+        //    if (this.HavePermission(Roles.SUPERVISOR))
+        //        return " - Supervisor";
+        //    if (this.HavePermission(Roles.ANALYST))
+        //        return " - Analista";
+        //    if (this.HavePermission(Roles.LEAD))
+        //        return " - Lider Técnico";
+        //    return null;
+        //}
     }
 }

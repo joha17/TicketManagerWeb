@@ -1,0 +1,47 @@
+﻿@model UE_ManagerWebApp.Models.TicketLog
+
+@{
+    ViewData["Title"] = "Transfer";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Transferir</h2>
+
+<hr />
+    <form asp-action="Transfer">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="form-group">
+            <label class="control-label"># Incidente</label>
+            <input asp-for="TicketNumber" value="@ViewBag.TicketNumber" class="form-control" readonly />
+            <span asp-validation-for="TicketNumber" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label class="control-label">Usuario a transferir</label>
+            <select asp-for="DestinationUser" class="form-control" asp-items="ViewBag.Usernames"></select>
+        </div>
+        <div class="form-group">
+            <label class="control-label">Usuario quien transfiere</label>
+            @if (ViewBag.Username != User.Claims.FirstOrDefault(c => c.Type == "Username").Value.ToString())
+            {
+                <input asp-for="FromUser" value="@User.Claims.FirstOrDefault(c => c.Type == "Username").Value.ToString()" class="form-control" readonly />
+            }
+            else
+            {
+                <input asp-for="FromUser" value="@ViewBag.Username" class="form-control" readonly />
+            }
+
+        </div>
+        <div >
+            <label class="control-label">Comentario</label>
+            <textarea asp-for="CommentLog" class="form-control" rows="4" type="text"></textarea>
+            <span asp-validation-for="CommentLog" class="text-danger"></span>
+        </div>
+        <br />
+        <div class="form-group">
+            <input type="submit" value="Transferir" class="btn btn-primary" />
+        </div>
+    </form>
+    <div>
+        <a class="btn btn-dark" type="button" asp-action="Index" role="button">Regresar</a>
+    </div>
+

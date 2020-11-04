@@ -26,10 +26,10 @@ namespace UE_ManagerWebApp.Controllers
         {
             try
             {
-                string role;
-                if (TempData["UserRole"] != null)
-                    role = TempData["UserRole"] as string;
-                TempData.Keep();
+                //string role;
+                //if (TempData["UserRole"] != null)
+                //    role = TempData["UserRole"] as string;
+                //TempData.Keep();
                 ViewData["CurrentSort"] = sortOrder;
                 ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
                 ViewData["DateSortParm"] = sortOrder == "Date" ? "date_desc" : "Date";
@@ -81,11 +81,6 @@ namespace UE_ManagerWebApp.Controllers
         {
             try
             {
-                string role;
-                if (TempData["UserRole"] != null)
-                    role = TempData["UserRole"] as string;
-                TempData.Keep();
-
                 if (id == null)
                 {
                     return NotFound();
@@ -113,10 +108,6 @@ namespace UE_ManagerWebApp.Controllers
         {
             try
             {
-                string role;
-                if (TempData["UserRole"] != null)
-                    role = TempData["UserRole"] as string;
-                TempData.Keep();
                 ViewData["DepartmentId"] = new SelectList(_context.Departments, "Id", "Name");
                 return View();
             }
@@ -137,14 +128,10 @@ namespace UE_ManagerWebApp.Controllers
         {
             try
             {
-                string role;
-                if (TempData["UserRole"] != null)
-                    role = TempData["UserRole"] as string;
-                TempData.Keep();
                 if (ModelState.IsValid)
                 {
                     applications.CreationDate = DateTime.Now;
-                    applications.CreationUser = "jcervantes";
+                    applications.CreationUser = HttpContext.User.Claims.FirstOrDefault(c => c.Type == "Username").Value.ToString();
                     _context.Add(applications);
                     await _context.SaveChangesAsync();
                     return RedirectToAction(nameof(Index));
@@ -164,10 +151,6 @@ namespace UE_ManagerWebApp.Controllers
         {
             try
             {
-                string role;
-                if (TempData["UserRole"] != null)
-                    role = TempData["UserRole"] as string;
-                TempData.Keep();
                 if (id == null)
                 {
                     return NotFound();
@@ -198,10 +181,6 @@ namespace UE_ManagerWebApp.Controllers
         {
             try
             {
-                string role;
-                if (TempData["UserRole"] != null)
-                    role = TempData["UserRole"] as string;
-                TempData.Keep();
                 if (id != applications.Id)
                 {
                     return NotFound();
@@ -212,7 +191,7 @@ namespace UE_ManagerWebApp.Controllers
                     try
                     {
                         applications.UpdateDate = DateTime.Now;
-                        applications.UpdateUser = "jcervantes";
+                        applications.UpdateUser = HttpContext.User.Claims.FirstOrDefault(c => c.Type == "Username").Value.ToString();
                         _context.Update(applications);
                         await _context.SaveChangesAsync();
                     }
@@ -245,10 +224,6 @@ namespace UE_ManagerWebApp.Controllers
         {
             try
             {
-                string role;
-                if (TempData["UserRole"] != null)
-                    role = TempData["UserRole"] as string;
-                TempData.Keep();
                 if (id == null)
                 {
                     return NotFound();
@@ -279,10 +254,6 @@ namespace UE_ManagerWebApp.Controllers
         {
             try
             {
-                string role;
-                if (TempData["UserRole"] != null)
-                    role = TempData["UserRole"] as string;
-                TempData.Keep();
                 var applications = await _context.Applications.FindAsync(id);
                 _context.Applications.Remove(applications);
                 await _context.SaveChangesAsync();

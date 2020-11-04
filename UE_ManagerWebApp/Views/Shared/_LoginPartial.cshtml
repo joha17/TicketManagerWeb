@@ -49,16 +49,24 @@
                                     Gestión de Tickets <span class="sr-only">(current)</span>
                                 </a>
                             </li>
-                            @if (TempData["UserRole"].ToString() != "ADMIN")
+                            @if (User.Claims.FirstOrDefault(c => c.Type == "AccessLevel").Value.ToString() != "ADMIN")
                             {
                                 <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Tickets" asp-action="Index"><i class="fas fa-ticket-alt"></i> Incidentes</a>
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Tickets" asp-action="Index"><i class="fas fa-ticket-alt"></i> Incidentes <span class="badge badge-pill badge-warning">@TempData["countTicketsTotal"]</span> </a>
                                 </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Tickets" asp-action="MyTickets"><i class="fas fa-ticket-alt"></i> Mis Incidentes <span class="badge badge-pill badge-warning">@TempData["countMyTicketsTotal"]</span> </a>
+                                </li>
+                                TempData.Keep("countMyTicketsTotal");
+                                TempData.Keep("countTicketsTotal");
                             }
                             else
                             {
                                 <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Tickets" asp-action="Index"><i class="fas fa-ticket-alt"></i> Incidentes</a>
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Tickets" asp-action="Index"><i class="fas fa-ticket-alt"></i> Incidentes <span class="badge badge-pill badge-warning">@TempData["countTicketsTotal"]</span> </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Tickets" asp-action="MyTickets"><i class="fas fa-ticket-alt"></i> Mis Incidentes <span class="badge badge-pill badge-warning">@TempData["countMyTicketsTotal"]</span> </a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link text-dark" asp-area="" asp-controller="Applications" asp-action="Index"><i class="fas fa-desktop"></i>   Aplicaciones</a>
@@ -75,9 +83,12 @@
                                 <li class="nav-item">
                                     <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Index"><i class="fas fa-users"></i>    Usuarios</a>
                                 </li>
+                                TempData.Keep("countMyTicketsTotal");
+                                TempData.Keep("countTicketsTotal");
                             }
 
                         </ul>
+                        
 
                         <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
                             <span>Gestión de Usuario</span>

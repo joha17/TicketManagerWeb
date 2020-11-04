@@ -1,0 +1,109 @@
+﻿@model UE_ManagerWebApp.Paged.PaginatedList<UE_ManagerWebApp.Models.Tickets>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Incidentes</h1>
+<a class="btn btn-warning" type="button" asp-action="Create" role="button"><i class="fas fa-plus"></i>  Nuevo Incidente</a>
+<a class="btn btn-info" type="button" asp-action="Upload" role="button"><i class="fas fa-upload"></i>  Subir Excel de Incidentes</a>
+<br />
+<br />
+<form asp-action="Index" method="get">
+    <div class="form-row align-items-center">
+        @*<div class="col-auto">
+                <label class="sr-only" for="inlineFormInput">Name</label>
+                <input type="text" class="form-control" id="inlineFormInput" name="SearchString" value="@ViewData["currentFilter"]" placeholder="Numero de Ticket">
+            </div>
+            <div class="col-auto">
+                <button type="submit" value="Search" class="btn btn-primary">Buscar</button>
+            </div>*@
+        <div class="input-group mb-3">
+            <label class="sr-only" for="inlineFormInput">Name</label>
+            <input type="text" class="form-control" id="inlineFormInput" placeholder="Numero de Ticket" name="SearchString" value="@ViewData["currentFilter"]">
+            <div class="input-group-append">
+                <button type="submit" value="Search" class="btn btn-outline-info"><i class="fas fa-search"></i></button>
+            </div>
+        </div>
+    </div>
+</form>
+<br />
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["NameSortParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]"># Incidente</a>
+            </th>
+            <th>
+                Palabra Clave
+            </th>
+            <th>
+                Fecha de Asignación
+            </th>
+            <th>
+                Usuario Asinado
+            </th>
+            <th>
+                Fecha de Creación
+            </th>
+            <th>
+                Cliente
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TicketNumber)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Keyword)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.AssignDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.AssignUser)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CreationDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Customer.CustomerName)
+                </td>
+                <td>
+                    <a class="btn btn-warning" type="button" asp-action="Edit" asp-route-id="@item.Id" role="button"><i class="fas fa-edit"></i></a>
+                    <a class="btn btn-info" type="button" asp-action="Details" asp-route-id="@item.Id" role="button"><i class="fas fa-eye"></i></a>
+                    @if (User.Claims.FirstOrDefault(c => c.Type == "AccessLevel").Value.ToString() == "ADMIN")
+                    {
+                        <a class="btn btn-danger" type="button" asp-action="Delete" asp-route-id="@item.Id" role="button"><i class="fas fa-trash"></i></a>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+@{
+    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+}
+
+<a asp-action="Index"
+   asp-route-sortOrder="@ViewData["CurrentSort"]"
+   asp-route-pageNumber="@(Model.PageIndex - 1)"
+   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+   class="btn btn-dark @prevDisabled">
+    <i class="fas fa-backward"></i>
+</a>
+<a asp-action="Index"
+   asp-route-sortOrder="@ViewData["CurrentSort"]"
+   asp-route-pageNumber="@(Model.PageIndex + 1)"
+   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+   class="btn btn-dark @nextDisabled">
+    <i class="fas fa-forward"></i>
+</a>

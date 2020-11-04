@@ -150,6 +150,33 @@ namespace UE_ManagerWebApp.Migrations
                     b.ToTable("Departments");
                 });
 
+            modelBuilder.Entity("UE_ManagerWebApp.Models.TicketLog", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("CommentLog")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DestinationUser")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FromUser")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("TicketNumber")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("TicketLog");
+                });
+
             modelBuilder.Entity("UE_ManagerWebApp.Models.Tickets", b =>
                 {
                     b.Property<int>("Id")
@@ -188,9 +215,6 @@ namespace UE_ManagerWebApp.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Keyword")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Status")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("TicketNumber")

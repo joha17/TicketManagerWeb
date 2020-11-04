@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -26,11 +25,6 @@ namespace UE_ManagerWebApp.Controllers
         {
             try
             {
-                string role;
-                if (TempData["UserRole"] != null)
-                    role = TempData["UserRole"] as string;
-
-                TempData.Keep();
                 return View(await _context.Causes.ToListAsync());
             }
             catch (Exception)
@@ -47,12 +41,6 @@ namespace UE_ManagerWebApp.Controllers
         {
             try
             {
-                string role;
-                if (TempData["UserRole"] != null)
-                    role = TempData["UserRole"] as string;
-
-                TempData.Keep();
-
                 if (id == null)
                 {
                     return NotFound();
@@ -81,11 +69,6 @@ namespace UE_ManagerWebApp.Controllers
         {
             try
             {
-                string role;
-                if (TempData["UserRole"] != null)
-                    role = TempData["UserRole"] as string;
-
-                TempData.Keep();
                 return View();
             }
             catch (Exception)
@@ -106,16 +89,10 @@ namespace UE_ManagerWebApp.Controllers
         {
             try
             {
-                string role;
-                if (TempData["UserRole"] != null)
-                    role = TempData["UserRole"] as string;
-
-                TempData.Keep();
-
                 if (ModelState.IsValid)
                 {
                     causes.CreationDate = DateTime.Now;
-                    causes.CreationUser = HttpContext.Session.GetString("UserName");
+                    causes.CreationUser = HttpContext.User.Claims.FirstOrDefault(c => c.Type == "Username").Value.ToString();
                     _context.Add(causes);
                     await _context.SaveChangesAsync();
                     return RedirectToAction(nameof(Index));
@@ -136,12 +113,6 @@ namespace UE_ManagerWebApp.Controllers
         {
             try
             {
-                string role;
-                if (TempData["UserRole"] != null)
-                    role = TempData["UserRole"] as string;
-
-                TempData.Keep();
-
                 if (id == null)
                 {
                     return NotFound();
@@ -172,12 +143,6 @@ namespace UE_ManagerWebApp.Controllers
         {
             try
             {
-                string role;
-                if (TempData["UserRole"] != null)
-                    role = TempData["UserRole"] as string;
-
-                TempData.Keep();
-
                 if (id != causes.Id)
                 {
                     return NotFound();
@@ -188,7 +153,7 @@ namespace UE_ManagerWebApp.Controllers
                     try
                     {
                         causes.UpdateDate = DateTime.Now;
-                        causes.UpdateUser = HttpContext.Session.GetString("UserName");
+                        causes.UpdateUser = HttpContext.User.Claims.FirstOrDefault(c => c.Type == "Username").Value.ToString();
                         _context.Update(causes);
                         await _context.SaveChangesAsync();
                     }

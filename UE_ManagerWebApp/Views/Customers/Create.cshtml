@@ -8,66 +8,65 @@
 
 <h4>Cliente</h4>
 <hr />
-<div class="row">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label class="control-label">Código</label>
-                <input asp-for="CustomerCode" class="form-control" />
-                <span asp-validation-for="CustomerCode" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label  class="control-label">Nombre</label>
-                <input asp-for="CustomerName" class="form-control" />
-                <span asp-validation-for="CustomerName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label class="control-label">Estado</label>
-                <input asp-for="Status" class="form-control" />
-                <span asp-validation-for="Status" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label  class="control-label">Tipo</label>
-                <select asp-for="IssuerAdquier" class="form-control">
-                    <option value="A">Adquirente</option>
-                    <option value="I">Emisor</option>
-                </select>
-                <span asp-validation-for="IssuerAdquier" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label class="control-label">Codigo País</label>
-                <select asp-for="IssuerAdquier" class="form-control">
-                    <option value="BLZ">Belize</option>
-                    <option value="BSD">USA</option>
-                    <option value="CRC">Costa Rica</option>
-                    <option value="DOM">Republica Dominicana</option>
-                    <option value="EUR">Europa</option>
-                    <option value="GTM">Guatemala</option>
-                    <option value="HNL">Honduras</option>
-                    <option value="MEX">Mexico</option>
-                    <option value="NIO">Nicaragua</option>
-                    <option value="PAN">Panamá</option>
-                    <option value="SLV">Salvador</option>
-                    <option value="VEN">Venezuela</option>
-                </select>
-                <span asp-validation-for="CountryCode" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label class="control-label">Cartera</label>
-                @*<input asp-for="Wallet" class="form-control" />*@
-                <select asp-for="Wallet" class="form-control">
-                    <option value="0">Black</option>
-                    <option value="1">Platino</option>
-                    <option value="2">Gold</option>
-                    <option value="3">Green</option>
-                </select>
-                <span asp-validation-for="Wallet" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Crear" class="btn btn-primary" />
-            </div>
-        </form>
-</div>
+    <form asp-action="Create">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="form-group">
+            <label class="control-label">Código</label>
+            <input asp-for="CustomerCode" class="form-control" />
+            <span asp-validation-for="CustomerCode" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label  class="control-label">Nombre</label>
+            <input asp-for="CustomerName" class="form-control" />
+            <span asp-validation-for="CustomerName" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label class="control-label">Estado</label>
+            <input asp-for="Status" class="form-control" />
+            <span asp-validation-for="Status" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label  class="control-label">Tipo</label>
+            <select asp-for="IssuerAdquier" class="form-control">
+                <option value="A">Adquirente</option>
+                <option value="I">Emisor</option>
+            </select>
+            <span asp-validation-for="IssuerAdquier" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label class="control-label">Codigo País</label>
+            <select asp-for="IssuerAdquier" class="form-control">
+                <option value="BLZ">Belize</option>
+                <option value="BSD">USA</option>
+                <option value="CRC">Costa Rica</option>
+                <option value="DOM">Republica Dominicana</option>
+                <option value="EUR">Europa</option>
+                <option value="GTM">Guatemala</option>
+                <option value="HNL">Honduras</option>
+                <option value="MEX">Mexico</option>
+                <option value="NIO">Nicaragua</option>
+                <option value="PAN">Panamá</option>
+                <option value="SLV">Salvador</option>
+                <option value="VEN">Venezuela</option>
+            </select>
+            <span asp-validation-for="CountryCode" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label class="control-label">Cartera</label>
+            @*<input asp-for="Wallet" class="form-control" />*@
+            <select asp-for="Wallet" class="form-control">
+                <option value="0">Black</option>
+                <option value="1">Platino</option>
+                <option value="2">Gold</option>
+                <option value="3">Green</option>
+            </select>
+            <span asp-validation-for="Wallet" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <input type="submit" value="Crear" class="btn btn-primary" />
+        </div>
+    </form>
+
 
 <br />
 <div>

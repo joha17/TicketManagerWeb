@@ -21,12 +21,6 @@
             <th>
                 @Html.DisplayNameFor(model => model.CreationUser)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.UpdateDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.UpdateUser)
-            </th>
             <th></th>
         </tr>
     </thead>
@@ -41,12 +35,6 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.CreationUser)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UpdateDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UpdateUser)
             </td>
             <td>
                 <a class="btn btn-warning" type="button" asp-action="Edit" asp-route-id="@item.Id" role="button"><i class="fas fa-edit"></i></a>

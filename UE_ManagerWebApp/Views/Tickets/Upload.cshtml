@@ -1,0 +1,91 @@
+﻿@model IEnumerable<Tickets>
+@{
+    ViewData["Title"] = "Subir archivo de Incidentes";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h3>Subir archivo de Incidentes</h3>
+<br />
+<form asp-controller="Tickets" asp-action="Upload" class="form-group method="post" enctype="multipart/form-data">
+    <input type="file" name="file" class="form-control-file" />
+    <hr />
+    <button type="submit" class="btn btn-info">Subir</button>
+</form>
+
+
+@if (Model.Count() > 0)
+{
+    @*<button type="button" value="get rows and sent them to server" id="send-data" class="btn btn-success">Importar Datos</button>*@
+    <input type="button" value="Importar Datos" id="send-data" class="btn btn-success" />
+    <hr />
+    <table cellpadding="0" cellspacing="0" border="1" class="table table-condensed table-hover table-bordered" id="tickets-table">
+        <thead>
+            <tr>
+                <th scope="col">Ticket Number</th>
+                <th scope="col">Fecha de asignacion</th>
+                <th scope="col">Comentario</th>
+                <th scope="col">Usuario Asignado</th>
+                <th scope="col">Fecha de creacion</th>
+                <th scope="col">Fecha de Modificacion</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (Tickets incidente in Model)
+            {
+                <tr>
+                    <td>
+                        @incidente.TicketNumber
+                        @Html.HiddenFor(modelitem => incidente.TicketNumber)
+                    </td>
+                    <td>
+                        @incidente.AssignDate
+                        @Html.HiddenFor(modelitem => incidente.AssignDate)
+                    </td>
+                    <td>
+                        @incidente.Comment
+                        @Html.HiddenFor(modelitem => incidente.Comment)
+                    </td>
+                    <td>
+                        @incidente.AssignUser
+                        @Html.HiddenFor(modelitem => incidente.AssignUser)
+                    </td>
+                    <td>
+                        @incidente.CreationDate
+                        @Html.HiddenFor(modelitem => incidente.CreationDate)
+                    </td>
+                    <td>
+                        @incidente.UpdateDate
+                        @Html.HiddenFor(modelitem => incidente.UpdateDate)
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+
+@section scripts{
+    <script type="text/javascript" lang="en">
+    $(document).ready(function () {
+        $('#send-data').click(function () {
+            var rows = [];
+            $('#tickets-table tbody tr').each(function () {
+                var ticketNum = $(this).find('td').eq(0).text().trim();
+                var assiginDate = $(this).find('td').eq(1).text().trim();
+                var comment = $(this).find('td').eq(2).text().trim();
+                var assignUser = $(this).find('td').eq(3).text().trim();
+                var creationDate = $(this).find('td').eq(4).text().trim();
+                var updateDate = $(this).find('td').eq(5).text().trim();
+                var row = ticketNum + "|" + assiginDate + "|" + comment + "|" + assignUser + "|" + creationDate + "|" + updateDate;
+                rows.push(row);
+            });
+
+
+            $.post('@Url.Action("ImportData", "Tickets")', { rows: rows }, function (data) {
+                console.log(data);
+            });
+
+        });
+    });
+    </script>
+}

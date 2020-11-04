@@ -6,70 +6,97 @@
 
 <h1>Detalle</h1>
 
-    <div class="jumbotron">
-        <h3 class="display-4">#@Html.DisplayFor(model => model.TicketNumber)</h3>
-        <br />
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Keyword)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Keyword)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.AssignDate)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.AssignDate)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.EndDate)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.EndDate)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Comment)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Comment)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.CreationUser)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.CreationUser)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.CreationDate)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.CreationDate)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.UpdateUser)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.UpdateUser)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.UpdateDate)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.UpdateDate)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.AssignUser)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.AssignUser)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Application.ApplicationName)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Application.ApplicationName)
-        </dd>
-        <hr class="my-4">
-        <a class="btn btn-primary" asp-action="Edit" asp-route-id="@Model.Id">Editar</a> 
-        <a class="btn btn-dark" asp-action="Index">Regresar</a>
-    </div>
+<div class="jumbotron">
+    <h3 class="display-4">#@Html.DisplayFor(model => model.TicketNumber)</h3>
+    <br />
+    <dt class="col-sm-2">
+        @Html.DisplayNameFor(model => model.Keyword)
+    </dt>
+    <dd class="col-sm-10">
+        @Html.DisplayFor(model => model.Keyword)
+    </dd>
+    <dt class="col-sm-2">
+        @Html.DisplayNameFor(model => model.AssignDate)
+    </dt>
+    <dd class="col-sm-10">
+        @Html.DisplayFor(model => model.AssignDate)
+    </dd>
+    <dt class="col-sm-2">
+        @Html.DisplayNameFor(model => model.EndDate)
+    </dt>
+    <dd class="col-sm-10">
+        @Html.DisplayFor(model => model.EndDate)
+    </dd>
+    <dt class="col-sm-2">
+        @Html.DisplayNameFor(model => model.Comment)
+    </dt>
+    <dd class="col-sm-10">
+        @Html.DisplayFor(model => model.Comment)
+    </dd>
+    <dt class="col-sm-2">
+        @Html.DisplayNameFor(model => model.CreationUser)
+    </dt>
+    <dd class="col-sm-10">
+        @Html.DisplayFor(model => model.CreationUser)
+    </dd>
+    <dt class="col-sm-2">
+        @Html.DisplayNameFor(model => model.CreationDate)
+    </dt>
+    <dd class="col-sm-10">
+        @Html.DisplayFor(model => model.CreationDate)
+    </dd>
+    <dt class="col-sm-2">
+        @Html.DisplayNameFor(model => model.UpdateUser)
+    </dt>
+    <dd class="col-sm-10">
+        @Html.DisplayFor(model => model.UpdateUser)
+    </dd>
+    <dt class="col-sm-2">
+        @Html.DisplayNameFor(model => model.UpdateDate)
+    </dt>
+    <dd class="col-sm-10">
+        @Html.DisplayFor(model => model.UpdateDate)
+    </dd>
+    <dt class="col-sm-2">
+        @Html.DisplayNameFor(model => model.AssignUser)
+    </dt>
+    <dd class="col-sm-10">
+        @Html.DisplayFor(model => model.AssignUser)
+    </dd>
+    <dt class="col-sm-2">
+        @Html.DisplayNameFor(model => model.Application.ApplicationName)
+    </dt>
+    <dd class="col-sm-10">
+        @Html.DisplayFor(model => model.Application.ApplicationName)
+    </dd>
+    <hr class="my-4">
+
+</div>
+
+<div class="jumbotron">
+    <h5 class="display-4">Comentarios</h5>
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Comentario</th>
+                <th scope="col">Fecha de creacion</th>
+                <th scope="col">Usuario quien asigna</th>
+                <th scope="col">Usuario asignado</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var ticketlog in (IEnumerable<TicketLog>)ViewData["TicketLog"])
+            {
+                <tr>
+                    <td>@ticketlog.CommentLog</td>
+                    <td>@ticketlog.CreationDate</td>
+                    <td>@ticketlog.FromUser</td>
+                    <td>@ticketlog.DestinationUser</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<a class="btn btn-primary" asp-action="Edit" asp-route-id="@Model.Id">Editar</a>
+<a class="btn btn-dark" asp-action="Index">Regresar</a>
