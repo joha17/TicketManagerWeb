@@ -53,10 +53,6 @@
         <span asp-validation-for="Comment" class="text-danger"></span>
     </div>
     <div class="form-group">
-        @*<label asp-for="AssignUser" class="control-label"></label>
-            <input asp-for="AssignUser" class="form-control" />
-            <span asp-validation-for="AssignUser" class="text-danger"></span>*@
-
         <label asp-for="AssignUser" class="control-label"></label>
         @*<input asp-for="AssignUser" type="text" class="form-control" id="productName" placeholder="Digite un usuario" />*@
         <select asp-for="AssignUser" class="form-control" asp-items="ViewBag.Username"></select>

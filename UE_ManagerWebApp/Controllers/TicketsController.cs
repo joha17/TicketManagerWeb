@@ -59,7 +59,7 @@ namespace UE_ManagerWebApp.Controllers
 
                 ViewData["CurrentFilter"] = searchString;
 
-                var tickets = from s in _context.Tickets.Include(t => t.Application).Include(c => c.Cause).Include(d => d.Department).Include(k => k.Customer)
+                var tickets = from s in _context.Tickets.Include(t => t.Application).Include(c => c.Cause).Include(k => k.Customer)
                               select s;
                 if (!String.IsNullOrEmpty(searchString))
                 {
@@ -120,7 +120,7 @@ namespace UE_ManagerWebApp.Controllers
 
                 ViewData["CurrentFilter"] = searchString;
                 var username = HttpContext.User.Claims.FirstOrDefault(c => c.Type == "Username").Value.ToString();
-                var tickets = from s in _context.Tickets.Include(t => t.Application).Include(c => c.Cause).Include(d => d.Department).Include(k => k.Customer).Where(x => x.AssignUser == username)
+                var tickets = from s in _context.Tickets.Include(t => t.Application).Include(c => c.Cause).Include(k => k.Customer).Where(x => x.AssignUser == username)
                               select s;
                 if (!String.IsNullOrEmpty(searchString))
                 {
@@ -166,7 +166,7 @@ namespace UE_ManagerWebApp.Controllers
                     return NotFound();
                 }
 
-                var tickets = await _context.Tickets.Include(t => t.Application).Include(c => c.Cause).Include(d => d.Department).Include(k => k.Customer)
+                var tickets = await _context.Tickets.Include(t => t.Application).Include(c => c.Cause).Include(k => k.Customer)
                     .FirstOrDefaultAsync(m => m.Id == id);
                 if (tickets == null)
                 {
@@ -192,7 +192,7 @@ namespace UE_ManagerWebApp.Controllers
             try
             {
                 ViewData["ApplicationId"] = new SelectList(_context.Applications, "Id", "ApplicationName");
-                ViewData["DepartmentId"] = new SelectList(_context.Departments, "Id", "Name");
+                ViewData["DepartmentId"] = new SelectList(_contextUsers.Department, "Id", "Name");
                 ViewData["CauseId"] = new SelectList(_context.Causes, "Id", "Description");
                 ViewData["CustomerId"] = new SelectList(_context.Customers, "Id", "CustomerName");
                 ViewData["Username"] = new SelectList(_contextUsers.Users.OrderBy(x=> x.Username), "Username", "Username");
@@ -223,7 +223,7 @@ namespace UE_ManagerWebApp.Controllers
                     return RedirectToAction(nameof(Index));
                 }
                 ViewData["ApplicationId"] = new SelectList(_context.Applications, "Id", "ApplicationName", tickets.ApplicationId);
-                ViewData["DepartmentId"] = new SelectList(_context.Departments, "Id", "Name", tickets.DepartmentId);
+                ViewData["DepartmentId"] = new SelectList(_contextUsers.Department, "Id", "Name");
                 ViewData["CauseId"] = new SelectList(_context.Causes, "Id", "Description", tickets.CauseId);
                 ViewData["CustomerId"] = new SelectList(_context.Customers, "Id", "CustomerName", tickets.CustomerId);
                 return View(tickets);
@@ -259,11 +259,12 @@ namespace UE_ManagerWebApp.Controllers
                     lsassingUsertemp = TempData["AssignUser"] as string;
 
                 ViewData["ApplicationId"] = new SelectList(_context.Applications, "Id", "ApplicationName", tickets.ApplicationId);
-                ViewData["DepartmentId"] = new SelectList(_context.Departments, "Id", "Name", tickets.DepartmentId);
+                ViewData["DepartmentId"] = new SelectList(_contextUsers.Department, "Id", "Name");
                 ViewData["CauseId"] = new SelectList(_context.Causes, "Id", "Description", tickets.CauseId);
                 ViewData["CustomerId"] = new SelectList(_context.Customers, "Id", "CustomerName", tickets.CustomerId);
                 TempData["TicketNumber"] = tickets.TicketNumber;
                 TempData["AssignUser"] = tickets.AssignUser;
+                ViewData["Username"] = new SelectList(_contextUsers.Users.OrderBy(x => x.Username), "Username", "Username", tickets.AssignUser);
                 return View(tickets);
             }
             catch (Exception)
@@ -310,7 +311,7 @@ namespace UE_ManagerWebApp.Controllers
                     return RedirectToAction(nameof(Index));
                 }
                 ViewData["ApplicationId"] = new SelectList(_context.Applications, "Id", "ApplicationName", tickets.ApplicationId);
-                ViewData["DepartmentId"] = new SelectList(_context.Departments, "Id", "Name", tickets.DepartmentId);
+                ViewData["DepartmentId"] = new SelectList(_contextUsers.Department, "Id", "Name");
                 ViewData["CauseId"] = new SelectList(_context.Causes, "Id", "Description", tickets.CauseId);
                 ViewData["CustomerId"] = new SelectList(_context.Customers, "Id", "CustomerName", tickets.CustomerId);
                 
@@ -390,6 +391,7 @@ namespace UE_ManagerWebApp.Controllers
         {
             try
             {
+                ViewBag.UploadError = string.Empty;
                 string filename = $"{hostingEnvironment.WebRootPath}\\files\\{file.FileName}";
                 using (FileStream fileStream = System.IO.File.Create(filename))
                 {
@@ -404,52 +406,69 @@ namespace UE_ManagerWebApp.Controllers
                 {
                     foreach (var user in allUsers)
                     {
-                        if (ticket.AssignUser.Contains(user.LastName))
+                        if (ticket.AssignUser != null)
                         {
-                            ticket.AssignUser = user.Username;
+                            if (ticket.AssignUser.Contains(user.LastName))
+                            {
+                                ticket.AssignUser = user.Username;
+                            }
                         }
+                        else
+                        {
+                            ticket.AssignUser = null;
+                        }
+                        
                     }
                 }
                 return Upload(excelTickets);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
-                throw;
+                ViewBag.UploadError = ex.Message;
+                return Upload();
             }
             
         }
 
         private List<Tickets> getTicketsList(string fname)
         {
-            List<Tickets> tickets = new List<Tickets>();
-            List<string> header = new List<string>();
-            var fileName = $"{Directory.GetCurrentDirectory()}{@"\wwwroot\files"}" + "\\" + fname;
-            System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
-
-            using (var stream = System.IO.File.Open(fileName, FileMode.Open, FileAccess.Read))
+            try
             {
-                using (var reader=ExcelReaderFactory.CreateReader(stream))
+                List<Tickets> tickets = new List<Tickets>();
+                List<string> header = new List<string>();
+                var fileName = $"{Directory.GetCurrentDirectory()}{@"\wwwroot\files"}" + "\\" + fname;
+                System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+
+                using (var stream = System.IO.File.Open(fileName, FileMode.Open, FileAccess.Read))
                 {
-                    while (reader.Read())
+                    using (var reader = ExcelReaderFactory.CreateReader(stream))
                     {
-                        if (reader.GetFieldType(8) != typeof(string))
+                        while (reader.Read())
                         {
-                            tickets.Add(new Tickets()
+                            if (reader.GetFieldType(8) != typeof(string))
                             {
-                                TicketNumber = reader.GetValue(1).ToString(),
-                                Keyword = reader.GetValue(3).ToString(),
-                                AssignDate = reader.GetDateTime(8),
-                                Comment = reader.GetValue(4).ToString(),
-                                AssignUser = reader.GetValue(10).ToString(),
-                                CreationDate = reader.GetDateTime(7),
-                                UpdateDate = Convert.ToDateTime(reader.GetValue(17).ToString())
-                            });
+                                tickets.Add(new Tickets()
+                                {
+                                    TicketNumber = reader.GetValue(1).ToString(),
+                                    Keyword = reader.GetValue(3).ToString(),
+                                    AssignDate = reader.GetDateTime(8),
+                                    Comment = reader.GetValue(4).ToString(),
+                                    AssignUser = reader.GetValue(10) == null ? null : reader.GetValue(10).ToString(),
+                                    CreationDate = reader.GetDateTime(7),
+                                    UpdateDate = Convert.ToDateTime(reader.GetValue(17).ToString())
+                                });
+                            }
                         }
                     }
                 }
+                return tickets;
             }
-            return tickets;
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+            
         }
 
         private static ExcelDataSetConfiguration GetDataSetConfig()
@@ -508,7 +527,6 @@ namespace UE_ManagerWebApp.Controllers
                     item.ApplicationId = 425;
                     item.CauseId = 16;
                     item.CustomerId = 154;
-                    item.DepartmentId = 6;
                     item.Status = "A";
                     item.CreationUser = HttpContext.User.Claims.FirstOrDefault(c => c.Type == "Username").Value.ToString();
                     _context.Add(item);

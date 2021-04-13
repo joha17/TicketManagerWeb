@@ -16,6 +16,12 @@
         @Html.DisplayFor(model => model.Keyword)
     </dd>
     <dt class="col-sm-2">
+        @Html.DisplayName("Cliente")
+    </dt>
+    <dd class="col-sm-10">
+        @Html.DisplayFor(model => model.Customer.CustomerName)
+    </dd>
+    <dt class="col-sm-2">
         @Html.DisplayNameFor(model => model.AssignDate)
     </dt>
     <dd class="col-sm-10">

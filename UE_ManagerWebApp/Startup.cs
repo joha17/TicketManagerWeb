@@ -78,11 +78,20 @@ namespace UE_ManagerWebApp
                     //If the JWT is created using a web service then this could be the consumer URL - JRozario
                     ValidAudience = "http://localhost:44327/",
                     RequireExpirationTime = true,
+                    LifetimeValidator = LifetimeValidator,
                     ValidateLifetime = true,
                     ClockSkew = TimeSpan.Zero
                 };
             });
+        }
 
+        public bool LifetimeValidator(DateTime? notBefore, DateTime? expires, SecurityToken securityToken, TokenValidationParameters validationParameters)
+        {
+            if (expires != null)
+            {
+                if (DateTime.UtcNow < expires.Value.ToLocalTime()) return true;
+            }
+            return false;
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

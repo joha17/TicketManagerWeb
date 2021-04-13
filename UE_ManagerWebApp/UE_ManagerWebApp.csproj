@@ -6,16 +6,25 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Migrations\UE_ManagerAuthDB\**" />
+    <Content Remove="Migrations\UE_ManagerAuthDB\**" />
+    <EmbeddedResource Remove="Migrations\UE_ManagerAuthDB\**" />
+    <None Remove="Migrations\UE_ManagerAuthDB\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Remove="Migrations\20201102064405_Add_ticketlogs.cs" />
     <Compile Remove="Migrations\20201102064405_Add_ticketlogs.Designer.cs" />
-    <Compile Remove="Migrations\UE_ManagerAuthDB\20200514212800_AddIdentityTables.cs" />
-    <Compile Remove="Migrations\UE_ManagerAuthDB\20200514212800_AddIdentityTables.Designer.cs" />
-    <Compile Remove="Migrations\UE_ManagerAuthDB\20200514231644_AddIdentityTables.cs" />
-    <Compile Remove="Migrations\UE_ManagerAuthDB\20200514231644_AddIdentityTables.Designer.cs" />
-    <Compile Remove="Migrations\UE_ManagerAuthDB\20200514232141_AddIdentityTables.cs" />
-    <Compile Remove="Migrations\UE_ManagerAuthDB\20200514232141_AddIdentityTables.Designer.cs" />
-    <Compile Remove="Migrations\UE_ManagerAuthDB\20200514232504_AddIdentityTables.cs" />
-    <Compile Remove="Migrations\UE_ManagerAuthDB\20200514232504_AddIdentityTables.Designer.cs" />
+    <Compile Remove="Migrations\20210406172830_UserDepartmentId.cs" />
+    <Compile Remove="Migrations\20210406172830_UserDepartmentId.Designer.cs" />
+    <Compile Remove="Migrations\20210409224235_InitialCreate.cs" />
+    <Compile Remove="Migrations\20210409224235_InitialCreate.Designer.cs" />
+    <Compile Remove="Migrations\AuthDB\20210409224309_InitialCreate.cs" />
+    <Compile Remove="Migrations\AuthDB\20210409224309_InitialCreate.Designer.cs" />
+    <Compile Remove="Migrations\UEManagerDB\20210409224736_InitialCreate.cs" />
+    <Compile Remove="Migrations\UEManagerDB\20210409224736_InitialCreate.Designer.cs" />
+    <Compile Remove="Migrations\UEManagerDB\20210409231904_AddDepartementRelationUser.cs" />
+    <Compile Remove="Migrations\UEManagerDB\20210409231904_AddDepartementRelationUser.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -38,7 +47,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Migrations\UE_ManagerAuthDB\" />
+    <Folder Include="Migrations\AuthDB\" />
     <Folder Include="wwwroot\files\" />
   </ItemGroup>
 

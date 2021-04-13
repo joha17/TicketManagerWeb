@@ -45,6 +45,8 @@ namespace UE_ManagerWebApp.Models
         [Display(Name = "Estado")]
         public string Status { get; set; }
 
+        public int DepartmentId { get; set; }
+
 
         [Display(Name = "Id Aplicación")]
         public int ApplicationId { get; set; }
@@ -55,9 +57,6 @@ namespace UE_ManagerWebApp.Models
         public int CauseId { get; set; }
         public Causes Cause { get; set; }
 
-        [Display(Name = "Departamento")]
-        public int DepartmentId { get; set; }
-        public Departments Department { get; set; }
 
         [Display(Name = "Cliente")]
         public int CustomerId { get; set; }

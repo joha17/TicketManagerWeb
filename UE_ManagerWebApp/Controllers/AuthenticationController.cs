@@ -77,10 +77,10 @@ namespace UE_ManagerWebApp.Controllers
                 ViewBag.Message = "User logged in bad!";
                 return View();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
 
-                throw;
+                throw ex;
             }
             
         }
@@ -99,65 +99,5 @@ namespace UE_ManagerWebApp.Controllers
             }
             
         }
-        //public IActionResult NoPermission()
-        //{
-        //    try
-        //    {
-        //        string role;
-        //        if (TempData["UserRole"] != null)
-        //            role = TempData["UserRole"] as string;
-        //        TempData.Keep();
-
-        //        ViewBag.UserRole = GetRole();
-        //        return View("NoPermission");
-        //    }
-        //    catch (Exception)
-        //    {
-
-        //        throw;
-        //    }
-        //}
-
-        //private string setRole(string accessLevel) 
-        //{
-        //    try
-        //    {
-        //        if (accessLevel.Equals("ADMIN"))
-        //        {
-        //            return "ADMIN";
-        //        }
-        //        if (accessLevel.Equals("SUPERVISOR"))
-        //        {
-        //            return "SUPERVISOR";
-        //        }
-        //        if (accessLevel.Equals("LEAD"))
-        //        {
-        //            return "LEAD";
-        //        }
-        //        else
-        //        {
-        //            return "ANALYST";
-        //        }
-        //    }
-        //    catch (Exception)
-        //    {
-
-        //        throw;
-        //    }
-        //}
-
-
-        //private string GetRole()
-        //{
-        //    if (this.HavePermission(Roles.ADMIN))
-        //        return " - Admistrador";
-        //    if (this.HavePermission(Roles.SUPERVISOR))
-        //        return " - Supervisor";
-        //    if (this.HavePermission(Roles.ANALYST))
-        //        return " - Analista";
-        //    if (this.HavePermission(Roles.LEAD))
-        //        return " - Lider Técnico";
-        //    return null;
-        //}
     }
 }

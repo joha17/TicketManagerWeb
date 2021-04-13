@@ -14,11 +14,16 @@ namespace UE_ManagerWebApp.Controllers
     public class ApplicationsController : Controller
     {
         private readonly UEManagerDBContext _context;
+        private readonly AuthDBContext _contextAuth;
 
-        public ApplicationsController(UEManagerDBContext context)
+        public ApplicationsController(UEManagerDBContext context, AuthDBContext authDBContext)
         {
             _context = context;
+            _contextAuth = authDBContext;
         }
+
+        
+
 
         // GET: Applications
         [Microsoft.AspNetCore.Authorization.Authorize(Policy = "IsAdmin")]
@@ -108,7 +113,7 @@ namespace UE_ManagerWebApp.Controllers
         {
             try
             {
-                ViewData["DepartmentId"] = new SelectList(_context.Departments, "Id", "Name");
+                ViewData["DepartmentId"] = new SelectList(_contextAuth.Department, "Id", "Name");
                 return View();
             }
             catch (Exception)
@@ -161,7 +166,7 @@ namespace UE_ManagerWebApp.Controllers
                 {
                     return NotFound();
                 }
-                ViewData["DepartmentId"] = new SelectList(_context.Departments, "Id", "Name", applications.Id);
+                ViewData["DepartmentId"] = new SelectList(_contextAuth.Department, "Id", "Name", applications.Id);
                 return View(applications);
             }
             catch (Exception)
@@ -206,7 +211,7 @@ namespace UE_ManagerWebApp.Controllers
                             throw;
                         }
                     }
-                    ViewData["DepartmentId"] = new SelectList(_context.Departments, "Id", "Name", applications.Id);
+                    ViewData["DepartmentId"] = new SelectList(_contextAuth.Department, "Id", "Name", applications.Id);
                     return RedirectToAction(nameof(Index));
                 }
                 return View(applications);

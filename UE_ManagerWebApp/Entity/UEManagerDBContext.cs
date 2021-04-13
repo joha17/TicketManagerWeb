@@ -13,12 +13,11 @@ namespace UE_ManagerWebApp.Entity
             : base(options)
         {
         }
-        public DbSet<Departments> Departments { get; set; }
+        
         public DbSet<Causes> Causes { get; set; }
         public DbSet<Applications> Applications { get; set; }
         public DbSet<Customers> Customers { get; set; }
         public DbSet<UE_ManagerWebApp.Models.Tickets> Tickets { get; set; }
-        public DbSet<UE_ManagerWebApp.Models.Users> Users { get; set; }
         public DbSet<UE_ManagerWebApp.Models.TicketLog> TicketLog { get; set; }
 
     }

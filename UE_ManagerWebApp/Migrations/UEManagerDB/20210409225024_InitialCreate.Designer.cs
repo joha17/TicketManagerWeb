@@ -7,11 +7,11 @@ using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using UE_ManagerWebApp.Entity;
 
-namespace UE_ManagerWebApp.Migrations
+namespace UE_ManagerWebApp.Migrations.UEManagerDB
 {
     [DbContext(typeof(UEManagerDBContext))]
-    [Migration("20200509020215_firstMigration")]
-    partial class firstMigration
+    [Migration("20210409225024_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -40,9 +40,6 @@ namespace UE_ManagerWebApp.Migrations
                     b.Property<string>("CreationUser")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("DepartmentId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime?>("UpdateDate")
                         .HasColumnType("datetime2");
 
@@ -50,8 +47,6 @@ namespace UE_ManagerWebApp.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("DepartmentId");
 
                     b.ToTable("Applications");
                 });
@@ -125,31 +120,31 @@ namespace UE_ManagerWebApp.Migrations
                     b.ToTable("Customers");
                 });
 
-            modelBuilder.Entity("UE_ManagerWebApp.Models.Departments", b =>
+            modelBuilder.Entity("UE_ManagerWebApp.Models.TicketLog", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("Create_User")
+                    b.Property<string>("CommentLog")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("Creation_Date")
+                    b.Property<DateTime>("CreationDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("DestinationUser")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("Update_Date")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Update_User")
+                    b.Property<string>("FromUser")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("TicketNumber")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Departments");
+                    b.ToTable("TicketLog");
                 });
 
             modelBuilder.Entity("UE_ManagerWebApp.Models.Tickets", b =>
@@ -159,7 +154,7 @@ namespace UE_ManagerWebApp.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("ApplicationId")
+                    b.Property<int>("ApplicationId")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("AssignDate")
@@ -168,7 +163,7 @@ namespace UE_ManagerWebApp.Migrations
                     b.Property<string>("AssignUser")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("CauseId")
+                    b.Property<int>("CauseId")
                         .HasColumnType("int");
 
                     b.Property<string>("Comment")
@@ -180,16 +175,19 @@ namespace UE_ManagerWebApp.Migrations
                     b.Property<string>("CreationUser")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("CustomerId")
+                    b.Property<int>("CustomerId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("DepartmentId")
+                    b.Property<int>("DepartmentId")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("EndDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Keyword")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Status")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("TicketNumber")
@@ -209,35 +207,28 @@ namespace UE_ManagerWebApp.Migrations
 
                     b.HasIndex("CustomerId");
 
-                    b.HasIndex("DepartmentId");
-
                     b.ToTable("Tickets");
-                });
-
-            modelBuilder.Entity("UE_ManagerWebApp.Models.Applications", b =>
-                {
-                    b.HasOne("UE_ManagerWebApp.Models.Departments", "Department")
-                        .WithMany("Applications")
-                        .HasForeignKey("DepartmentId");
                 });
 
             modelBuilder.Entity("UE_ManagerWebApp.Models.Tickets", b =>
                 {
                     b.HasOne("UE_ManagerWebApp.Models.Applications", "Application")
                         .WithMany("Tickets")
-                        .HasForeignKey("ApplicationId");
+                        .HasForeignKey("ApplicationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("UE_ManagerWebApp.Models.Causes", "Cause")
                         .WithMany("Tickets")
-                        .HasForeignKey("CauseId");
+                        .HasForeignKey("CauseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("UE_ManagerWebApp.Models.Customers", "Customer")
                         .WithMany("Tickets")
-                        .HasForeignKey("CustomerId");
-
-                    b.HasOne("UE_ManagerWebApp.Models.Departments", "Department")
-                        .WithMany("Tickets")
-                        .HasForeignKey("DepartmentId");
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

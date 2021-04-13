@@ -1,12 +1,30 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace UE_ManagerWebApp.Migrations
+namespace UE_ManagerWebApp.Migrations.UEManagerDB
 {
-    public partial class firstMigration : Migration
+    public partial class InitialCreate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "Applications",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ApplicationName = table.Column<string>(nullable: true),
+                    ApplicationType = table.Column<int>(nullable: false),
+                    CreationDate = table.Column<DateTime>(nullable: true),
+                    CreationUser = table.Column<string>(nullable: true),
+                    UpdateDate = table.Column<DateTime>(nullable: true),
+                    UpdateUser = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Applications", x => x.Id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "Causes",
                 columns: table => new
@@ -47,45 +65,20 @@ namespace UE_ManagerWebApp.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Departments",
+                name: "TicketLog",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(nullable: true),
-                    Creation_Date = table.Column<DateTime>(nullable: true),
-                    Create_User = table.Column<string>(nullable: true),
-                    Update_Date = table.Column<DateTime>(nullable: true),
-                    Update_User = table.Column<string>(nullable: true)
+                    TicketNumber = table.Column<int>(nullable: false),
+                    CreationDate = table.Column<DateTime>(nullable: false),
+                    DestinationUser = table.Column<string>(nullable: true),
+                    FromUser = table.Column<string>(nullable: true),
+                    CommentLog = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Departments", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Applications",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    ApplicationName = table.Column<string>(nullable: true),
-                    ApplicationType = table.Column<int>(nullable: false),
-                    DepartmentId = table.Column<int>(nullable: true),
-                    CreationDate = table.Column<DateTime>(nullable: true),
-                    CreationUser = table.Column<string>(nullable: true),
-                    UpdateDate = table.Column<DateTime>(nullable: true),
-                    UpdateUser = table.Column<string>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Applications", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Applications_Departments_DepartmentId",
-                        column: x => x.DepartmentId,
-                        principalTable: "Departments",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                    table.PrimaryKey("PK_TicketLog", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -104,10 +97,11 @@ namespace UE_ManagerWebApp.Migrations
                     UpdateUser = table.Column<string>(nullable: true),
                     UpdateDate = table.Column<DateTime>(nullable: true),
                     AssignUser = table.Column<string>(nullable: true),
-                    ApplicationId = table.Column<int>(nullable: true),
-                    CauseId = table.Column<int>(nullable: true),
-                    DepartmentId = table.Column<int>(nullable: true),
-                    CustomerId = table.Column<int>(nullable: true)
+                    Status = table.Column<string>(nullable: true),
+                    DepartmentId = table.Column<int>(nullable: false),
+                    ApplicationId = table.Column<int>(nullable: false),
+                    CauseId = table.Column<int>(nullable: false),
+                    CustomerId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -117,31 +111,20 @@ namespace UE_ManagerWebApp.Migrations
                         column: x => x.ApplicationId,
                         principalTable: "Applications",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Tickets_Causes_CauseId",
                         column: x => x.CauseId,
                         principalTable: "Causes",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Tickets_Customers_CustomerId",
                         column: x => x.CustomerId,
                         principalTable: "Customers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Tickets_Departments_DepartmentId",
-                        column: x => x.DepartmentId,
-                        principalTable: "Departments",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Applications_DepartmentId",
-                table: "Applications",
-                column: "DepartmentId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Tickets_ApplicationId",
@@ -157,15 +140,13 @@ namespace UE_ManagerWebApp.Migrations
                 name: "IX_Tickets_CustomerId",
                 table: "Tickets",
                 column: "CustomerId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Tickets_DepartmentId",
-                table: "Tickets",
-                column: "DepartmentId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "TicketLog");
+
             migrationBuilder.DropTable(
                 name: "Tickets");
 
@@ -177,9 +158,6 @@ namespace UE_ManagerWebApp.Migrations
 
             migrationBuilder.DropTable(
                 name: "Customers");
-
-            migrationBuilder.DropTable(
-                name: "Departments");
         }
     }
 }

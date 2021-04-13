@@ -51,8 +51,9 @@
         </div>
         <div class="form-group">
             <label class="control-label">Usuario Asignado</label>
-            <input asp-for="AssignUser" class="form-control" />
+            <select asp-for="AssignUser" class="form-control" asp-items="ViewBag.Username" disabled></select>
             <span asp-validation-for="AssignUser" class="text-danger"></span>
+
         </div>
         <div class="form-group">
             <label class="control-label">Estado</label>
@@ -69,7 +70,7 @@
             <select asp-for="CustomerId" class="form-control" asp-items="ViewBag.CustomerId"></select>
         </div>
         <div class="form-group">
-            <label asp-for="ApplicationId" class="control-label"></label>
+            <label class="control-label">Aplicación</label>
             <select asp-for="ApplicationId" class="form-control" asp-items="ViewBag.ApplicationId"></select>
         </div>
         <div class="form-group">

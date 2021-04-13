@@ -15,9 +15,9 @@ namespace UE_ManagerWebApp.Controllers
 {
     public class DepartmentsController : Controller
     {
-        private readonly UEManagerDBContext _context;
+        private readonly AuthDBContext _context;
 
-        public DepartmentsController(UEManagerDBContext context)
+        public DepartmentsController(AuthDBContext context)
         {
             _context = context;
         }
@@ -28,7 +28,7 @@ namespace UE_ManagerWebApp.Controllers
         {
             try
             {
-                return View(await _context.Departments.ToListAsync());
+                return View(await _context.Department.ToListAsync());
             }
             catch (Exception)
             {
@@ -49,7 +49,7 @@ namespace UE_ManagerWebApp.Controllers
                     return NotFound();
                 }
 
-                var departments = await _context.Departments
+                var departments = await _context.Department
                     .FirstOrDefaultAsync(m => m.Id == id);
                 if (departments == null)
                 {
@@ -120,7 +120,7 @@ namespace UE_ManagerWebApp.Controllers
                     return NotFound();
                 }
 
-                var departments = await _context.Departments.FindAsync(id);
+                var departments = await _context.Department.FindAsync(id);
                 if (departments == null)
                 {
                     return NotFound();
@@ -191,7 +191,7 @@ namespace UE_ManagerWebApp.Controllers
                     return NotFound();
                 }
 
-                var departments = await _context.Departments
+                var departments = await _context.Department
                     .FirstOrDefaultAsync(m => m.Id == id);
                 if (departments == null)
                 {
@@ -216,8 +216,8 @@ namespace UE_ManagerWebApp.Controllers
         {
             try
             {
-                var departments = await _context.Departments.FindAsync(id);
-                _context.Departments.Remove(departments);
+                var departments = await _context.Department.FindAsync(id);
+                _context.Department.Remove(departments);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
@@ -231,7 +231,7 @@ namespace UE_ManagerWebApp.Controllers
 
         private bool DepartmentsExists(int id)
         {
-            return _context.Departments.Any(e => e.Id == id);
+            return _context.Department.Any(e => e.Id == id);
         }
     }
 }

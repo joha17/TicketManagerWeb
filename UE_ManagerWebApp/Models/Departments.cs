@@ -26,7 +26,6 @@ namespace UE_ManagerWebApp.Models
         [Display(Name = "Usuario de Actualización")]
         public string Update_User { get; set; }
 
-        public ICollection<Applications> Applications { get; set; }
-        public ICollection<Tickets> Tickets { get; set; }
+
     }
 }

@@ -23,13 +23,13 @@
                                 <form asp-controller="Authentication" asp-action="LoginUser" method="post">
                                     <strong>@ViewBag.Message</strong>
                                     <div class="form-label-group">
-                                        <input class="form-control" asp-for="Username" value="jcervantes" placeholder="Username" required autofocus />
+                                        <input class="form-control" asp-for="Username" value="" placeholder="Username" required autofocus />
                                         <label for="inputEmail">Usuario</label>
                                         <span asp-validation-for="Username"></span>
                                     </div>
 
                                     <div class="form-label-group">
-                                        <input type="password" class="form-control" asp-for="Password" value="Megapanza17" placeholder="Password" required />
+                                        <input type="password" class="form-control" asp-for="Password" value="" placeholder="Password" required />
                                         <span asp-validation-for="Password"></span>
                                         <label for="inputPassword">Contraseña</label>
                                     </div>

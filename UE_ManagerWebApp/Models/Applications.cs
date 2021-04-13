@@ -18,12 +18,6 @@ namespace UE_ManagerWebApp.Models
         [Display(Name = "Tipo Aplicación")]
         public int ApplicationType { get; set; }
 
-        [Display(Name = "Departamento")]
-        public int DepartmentId { get; set; }
-
-        [Display(Name = "Departamento")]
-        public Departments Department { get; set; }
-
         [Display(Name = "Fecha de Creación")]
         public DateTime? CreationDate { get; set; }
 

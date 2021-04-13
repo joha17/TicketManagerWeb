@@ -124,6 +124,7 @@ namespace UE_ManagerWebApp.Controllers
         {
             try
             {
+                ViewData["DepartmentId"] = new SelectList(_context.Department, "Id", "Name");
                 return View();
             }
             catch (Exception)
@@ -144,12 +145,6 @@ namespace UE_ManagerWebApp.Controllers
         {
             try
             {
-                string role;
-                if (TempData["UserRole"] != null)
-                    role = TempData["UserRole"] as string;
-
-                TempData.Keep();
-
                 if (ModelState.IsValid)
                 {
                     users.Password = MD5.MD5Crypto.Encrypt(users.Password);
@@ -183,6 +178,9 @@ namespace UE_ManagerWebApp.Controllers
                 {
                     return NotFound();
                 }
+
+                ViewData["DepartmentId"] = new SelectList(_context.Department, "Id", "Name");
+
                 return View(users);
             }
             catch (Exception)
@@ -229,6 +227,9 @@ namespace UE_ManagerWebApp.Controllers
                     }
                     return RedirectToAction(nameof(Index));
                 }
+
+                ViewData["DepartmentId"] = new SelectList(_context.Department, "Id", "Name");
+
                 return View(users);
             }
             catch (Exception)

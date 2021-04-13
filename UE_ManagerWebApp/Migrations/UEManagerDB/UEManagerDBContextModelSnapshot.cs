@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using UE_ManagerWebApp.Entity;
 
-namespace UE_ManagerWebApp.Migrations
+namespace UE_ManagerWebApp.Migrations.UEManagerDB
 {
     [DbContext(typeof(UEManagerDBContext))]
     partial class UEManagerDBContextModelSnapshot : ModelSnapshot
@@ -38,9 +38,6 @@ namespace UE_ManagerWebApp.Migrations
                     b.Property<string>("CreationUser")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("DepartmentId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime?>("UpdateDate")
                         .HasColumnType("datetime2");
 
@@ -48,8 +45,6 @@ namespace UE_ManagerWebApp.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("DepartmentId");
 
                     b.ToTable("Applications");
                 });
@@ -123,33 +118,6 @@ namespace UE_ManagerWebApp.Migrations
                     b.ToTable("Customers");
                 });
 
-            modelBuilder.Entity("UE_ManagerWebApp.Models.Departments", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Create_User")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("Creation_Date")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("Update_Date")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Update_User")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Departments");
-                });
-
             modelBuilder.Entity("UE_ManagerWebApp.Models.TicketLog", b =>
                 {
                     b.Property<int>("Id")
@@ -217,6 +185,9 @@ namespace UE_ManagerWebApp.Migrations
                     b.Property<string>("Keyword")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Status")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("TicketNumber")
                         .HasColumnType("nvarchar(max)");
 
@@ -234,54 +205,7 @@ namespace UE_ManagerWebApp.Migrations
 
                     b.HasIndex("CustomerId");
 
-                    b.HasIndex("DepartmentId");
-
                     b.ToTable("Tickets");
-                });
-
-            modelBuilder.Entity("UE_ManagerWebApp.Models.Users", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("AccessLevel")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("EmailID")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Username")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Users");
-                });
-
-            modelBuilder.Entity("UE_ManagerWebApp.Models.Applications", b =>
-                {
-                    b.HasOne("UE_ManagerWebApp.Models.Departments", "Department")
-                        .WithMany("Applications")
-                        .HasForeignKey("DepartmentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("UE_ManagerWebApp.Models.Tickets", b =>
@@ -301,12 +225,6 @@ namespace UE_ManagerWebApp.Migrations
                     b.HasOne("UE_ManagerWebApp.Models.Customers", "Customer")
                         .WithMany("Tickets")
                         .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("UE_ManagerWebApp.Models.Departments", "Department")
-                        .WithMany("Tickets")
-                        .HasForeignKey("DepartmentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
