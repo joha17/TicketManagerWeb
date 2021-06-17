@@ -13,6 +13,9 @@ using Microsoft.AspNetCore.Http;
 using UE_ManagerWebApp.CustomAttributes;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using Newtonsoft.Json.Serialization;
+using Microsoft.AspNetCore.Mvc.Formatters;
+using Newtonsoft;
 
 namespace UE_ManagerWebApp
 {
@@ -28,10 +31,28 @@ namespace UE_ManagerWebApp
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc(options => options.EnableEndpointRouting = false);
+            services.AddControllersWithViews();
+            services.AddRazorPages();
+            //services.AddServerSideBlazor();
+
+            services.AddMvc(option =>
+            {
+                option.EnableEndpointRouting = false;
+                // Add XML Content Negotiation
+                option.RespectBrowserAcceptHeader = true;
+                option.ReturnHttpNotAcceptable = true;
+                option.OutputFormatters.Add(new XmlSerializerOutputFormatter());
+            });
+            //.AddJsonOptions(o =>
+            //{
+            //    o.JsonSerializerOptions.PropertyNamingPolicy = null;
+            //    o.JsonSerializerOptions.DictionaryKeyPolicy = null;
+            //});
+
             services.AddSession(options => {
                 options.IdleTimeout = TimeSpan.FromMinutes(120);
             });
+
             services.AddSingleton<ITempDataProvider, CookieTempDataProvider>();
 
             services.AddDbContext<UEManagerDBContext>(options =>
@@ -52,8 +73,6 @@ namespace UE_ManagerWebApp
             });
 
             
-
-
             //Provide a secret key to Encrypt and Decrypt the Token - JRozario
             var SecretKey = Encoding.ASCII.GetBytes("YourKey-2374-OFFKDI940NG7:56753253-tyuw-5769-0921-kfirox29zoxv");
             //Configure JWT Token Authentication - JRozario
@@ -83,6 +102,7 @@ namespace UE_ManagerWebApp
                     ClockSkew = TimeSpan.Zero
                 };
             });
+
         }
 
         public bool LifetimeValidator(DateTime? notBefore, DateTime? expires, SecurityToken securityToken, TokenValidationParameters validationParameters)
@@ -112,7 +132,7 @@ namespace UE_ManagerWebApp
             //Addd User session - JRozario
             app.UseSession();
 
-            //Add JWToken to all incoming HTTP Request Header - JRozario
+            //Add JWToken to all incoming HTTP Request Header 
             app.Use(async (context, next) =>
             {
                 var JWToken = context.Session.GetString("JWToken");
@@ -122,8 +142,12 @@ namespace UE_ManagerWebApp
                 }
                 await next();
             });
-            //Add JWToken Authentication service - JRozario
+
+            //Add JWToken Authentication service
             app.UseAuthentication();
+
+            app.UseRouting();
+            app.UseAuthorization();
 
             app.UseMvc(routes =>
             {
@@ -131,6 +155,15 @@ namespace UE_ManagerWebApp
                     name: "default",
                     template: "{controller=Authentication}/{action=LoginUser}/{id?}");
             });
+
+            //app.UseEndpoints(endpoints =>
+            //{
+            //    endpoints.MapControllerRoute(
+            //        name: "default",
+            //        pattern: "{controller=Authentication}/{action=LoginUser}/{id?}");
+            //    // TODO: Map Blazor's SignalR hub 
+            //    endpoints.MapBlazorHub();
+            //});
         }
     }
 }

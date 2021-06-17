@@ -71,10 +71,10 @@ namespace UE_ManagerWebApp.Controllers
                     countTicketsTotal = _contextUE.Tickets.Count();
                     countMyTicketsTotal = _contextUE.Tickets.Where(x=> x.AssignUser == login.Username).Count();
 
-                    return Redirect("~/Tickets/Index");
+                    return Redirect("~/Tickets/MyTickets");
                     //return View("Views/Home/Index.cshtml");
                 }
-                ViewBag.Message = "User logged in bad!";
+                ViewBag.Message = "Credenciales incorrectos favor intente de nuevo";
                 return View();
             }
             catch (Exception ex)

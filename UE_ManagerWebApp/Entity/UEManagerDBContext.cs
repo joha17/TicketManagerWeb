@@ -20,5 +20,7 @@ namespace UE_ManagerWebApp.Entity
         public DbSet<UE_ManagerWebApp.Models.Tickets> Tickets { get; set; }
         public DbSet<UE_ManagerWebApp.Models.TicketLog> TicketLog { get; set; }
 
+        public DbSet<UE_ManagerWebApp.Models.TicketExecution> TicketExecution { get; set; }
+
     }
 }

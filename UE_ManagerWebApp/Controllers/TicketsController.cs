@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using UE_ManagerWebApp.CustomAttributes;
+using Newtonsoft.Json;
 using UE_ManagerWebApp.Entity;
 using UE_ManagerWebApp.Models;
 using UE_ManagerWebApp.Paged;
@@ -97,9 +97,20 @@ namespace UE_ManagerWebApp.Controllers
             }
             catch (Exception ex )
             {
-
                 throw ex;
             }
+        }
+
+        public async Task<IActionResult> MyTicketsFollow()
+        {
+            var username = HttpContext.User.Claims.FirstOrDefault(c => c.Type == "Username").Value.ToString();
+            var content = await _context.Tickets.Include(t => t.Application).Include(c => c.Cause).Include(k => k.Customer).Where(x => x.AssignUser == username).ToListAsync();
+            var options = new JsonSerializerSettings()
+            {
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+            };
+            var tickets = JsonConvert.SerializeObject(content, Formatting.Indented, options);
+            return View(tickets);
         }
 
         public async Task<IActionResult> MyTickets(string sortOrder, string currentFilter, string searchString, int? pageNumber)
@@ -146,6 +157,18 @@ namespace UE_ManagerWebApp.Controllers
                 countTicketsTotal = _context.Tickets.Count();
                 countMyTicketsTotal = _context.Tickets.Where(x => x.AssignUser == username).Count();
 
+                var ticketOnPlay = await _context.TicketExecution.Where(x => x.Active == 1).FirstOrDefaultAsync();
+
+                if (ticketOnPlay != null)
+                {
+                    ViewData["TicketOnPlay"] = ticketOnPlay.TicketNumber.ToString();
+                }
+                else
+                {
+                    ViewData["TicketOnPlay"] = "";
+                }
+                
+
                 return View(await PaginatedList<Tickets>.CreateAsync(tickets.AsNoTracking(), pageNumber ?? 1, pageSize));
             }
             catch (Exception)
@@ -191,8 +214,14 @@ namespace UE_ManagerWebApp.Controllers
         {
             try
             {
+                List<SelectListItem> list = new List<SelectListItem>();
+                var listUsers = _contextUsers.Department.ToList();
+                foreach (var  dep in listUsers)
+                {
+                    list.Add(new SelectListItem { Text = dep.Name.ToString(), Value = dep.Id.ToString() });
+                }
                 ViewData["ApplicationId"] = new SelectList(_context.Applications, "Id", "ApplicationName");
-                ViewData["DepartmentId"] = new SelectList(_contextUsers.Department, "Id", "Name");
+                ViewBag.DepartmentList = list;
                 ViewData["CauseId"] = new SelectList(_context.Causes, "Id", "Description");
                 ViewData["CustomerId"] = new SelectList(_context.Customers, "Id", "CustomerName");
                 ViewData["Username"] = new SelectList(_contextUsers.Users.OrderBy(x=> x.Username), "Username", "Username");
@@ -226,6 +255,7 @@ namespace UE_ManagerWebApp.Controllers
                 ViewData["DepartmentId"] = new SelectList(_contextUsers.Department, "Id", "Name");
                 ViewData["CauseId"] = new SelectList(_context.Causes, "Id", "Description", tickets.CauseId);
                 ViewData["CustomerId"] = new SelectList(_context.Customers, "Id", "CustomerName", tickets.CustomerId);
+                ViewData["Username"] = new SelectList(_contextUsers.Users.OrderBy(x => x.Username), "Username", "Username");
                 return View(tickets);
             }
             catch (Exception)
@@ -314,7 +344,9 @@ namespace UE_ManagerWebApp.Controllers
                 ViewData["DepartmentId"] = new SelectList(_contextUsers.Department, "Id", "Name");
                 ViewData["CauseId"] = new SelectList(_context.Causes, "Id", "Description", tickets.CauseId);
                 ViewData["CustomerId"] = new SelectList(_context.Customers, "Id", "CustomerName", tickets.CustomerId);
-                
+
+
+
                 return View(tickets);
             }
             catch (Exception)
@@ -623,6 +655,33 @@ namespace UE_ManagerWebApp.Controllers
                 ViewData["Username"] = new SelectList(_contextUsers.Users.OrderBy(x => x.Username), "Username", "Username");
 
                 return View(tickets);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<Microsoft.AspNetCore.Mvc.JsonResult> GetUsersList(int DepartmentId)
+        {
+            var userList = await _contextUsers.Users.Where(x => x.DepartmentId == DepartmentId).ToListAsync();
+            return Json(userList);
+        }
+
+        [HttpGet]
+        public JsonResult GetUsers(int departmentId)
+        {
+            try
+            {
+                var ds = _contextUsers.Users.Where(x=> x.DepartmentId == departmentId).ToList();
+                List<SelectListItem> list = new List<SelectListItem>();
+                foreach (var user in ds)
+                {
+                    list.Add(new SelectListItem { Text = user.Username, Value = user.FirstName });
+                }
+
+                return Json(list);
             }
             catch (Exception)
             {

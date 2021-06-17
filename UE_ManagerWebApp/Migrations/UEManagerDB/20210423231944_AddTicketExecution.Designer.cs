@@ -3,20 +3,22 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using UE_ManagerWebApp.Entity;
 
 namespace UE_ManagerWebApp.Migrations.UEManagerDB
 {
     [DbContext(typeof(UEManagerDBContext))]
-    partial class UEManagerDBContextModelSnapshot : ModelSnapshot
+    [Migration("20210423231944_AddTicketExecution")]
+    partial class AddTicketExecution
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
+                .HasAnnotation("ProductVersion", "3.1.3")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("ProductVersion", "5.0.5")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
             modelBuilder.Entity("UE_ManagerWebApp.Models.Applications", b =>
@@ -125,16 +127,13 @@ namespace UE_ManagerWebApp.Migrations.UEManagerDB
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("Active")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("CreationDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("PlayDate")
+                    b.Property<DateTime>("PlayDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("StopDate")
+                    b.Property<DateTime>("StopDate")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("TicketNumber")
@@ -257,27 +256,6 @@ namespace UE_ManagerWebApp.Migrations.UEManagerDB
                         .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Application");
-
-                    b.Navigation("Cause");
-
-                    b.Navigation("Customer");
-                });
-
-            modelBuilder.Entity("UE_ManagerWebApp.Models.Applications", b =>
-                {
-                    b.Navigation("Tickets");
-                });
-
-            modelBuilder.Entity("UE_ManagerWebApp.Models.Causes", b =>
-                {
-                    b.Navigation("Tickets");
-                });
-
-            modelBuilder.Entity("UE_ManagerWebApp.Models.Customers", b =>
-                {
-                    b.Navigation("Tickets");
                 });
 #pragma warning restore 612, 618
         }

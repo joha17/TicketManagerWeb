@@ -1,0 +1,49 @@
+﻿@using UE_ManagerWebApp.Models
+
+<div class="card-header">
+
+    <h3>Mis Tickets</h3>
+</div>
+<div class="card-body">
+    <br />
+</div>
+
+@code {
+    [Parameter]
+    public List<Tickets> TicketsList { get; set; }
+
+    [Parameter]
+    public List<Tickets> TicketsListeR { get; set; } = new List<Tickets>();
+
+    //[Parameter]
+    //public string Data { get; set; } = string.Empty;
+    //[Parameter]
+    //public string style { get; set; }
+    //private void Getdata()
+    //{
+    //    Data = "I am Working";
+    //    style = "badge-success";
+
+    //}
+
+    private string message;
+
+    protected override void OnInitialized()
+    {
+        var ites = "";
+        var iteb = "";
+
+        foreach (var item in TicketsList)
+        {
+            ites = "";
+        }
+
+        foreach (var item in TicketsList)
+        {
+            iteb = "";
+        }
+
+        message = iteb;
+    }
+
+}  

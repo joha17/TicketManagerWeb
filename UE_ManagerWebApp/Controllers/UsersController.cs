@@ -141,7 +141,7 @@ namespace UE_ManagerWebApp.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Microsoft.AspNetCore.Authorization.Authorize(Policy = "IsAdmin")]
-        public async Task<IActionResult> Create([Bind("Id,Username,Password,FirstName,LastName,EmailID,AccessLevel,ReadOnly")] Users users)
+        public async Task<IActionResult> Create([Bind("Id,Username,Password,FirstName,LastName,DepartmentId,EmailID,AccessLevel,ReadOnly")] Users users)
         {
             try
             {
@@ -152,6 +152,7 @@ namespace UE_ManagerWebApp.Controllers
                     await _context.SaveChangesAsync();
                     return RedirectToAction(nameof(Index));
                 }
+                ViewData["DepartmentId"] = new SelectList(_context.Department, "Id", "Name");
                 return View(users);
             }
             catch (Exception)
@@ -197,7 +198,7 @@ namespace UE_ManagerWebApp.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Microsoft.AspNetCore.Authorization.Authorize(Policy = "IsAdmin")]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Username,Password,FirstName,LastName,EmailID,AccessLevel,ReadOnly")] Users users)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Username,Password,FirstName,LastName,DepartmentId,EmailID,AccessLevel,ReadOnly")] Users users)
         {
             try
             {
@@ -334,7 +335,7 @@ namespace UE_ManagerWebApp.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Microsoft.AspNetCore.Authorization.Authorize(Policy = "IsAdmin")]
-        public async Task<IActionResult> EditMyData(int id, [Bind("Id,Username,Password,FirstName,LastName,EmailID,AccessLevel,ReadOnly")] Users users)
+        public async Task<IActionResult> EditMyData(int id, [Bind("Id,Username,Password,FirstName,LastName,DepartmentId,EmailID,AccessLevel,ReadOnly")] Users users)
         {
             try
             {

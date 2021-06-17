@@ -1,0 +1,18 @@
+﻿@model IEnumerable<Tickets>
+
+
+@{
+    ViewData["Title"] = "Mis tickets";
+}
+
+<component type="typeof(UE_ManagerWebApp.Components.MyTicketsList)" render-mode="ServerPrerendered" param-Tickets="Model"/>
+@*@(await Html.RenderComponentAsync<UE_ManagerWebApp.Pages.MyTickets>(RenderMode.ServerPrerendered,new { TicketsListeR = Model }))*@
+
+
+
+<!--<component type="typeof(MyTickets)" render-mode="ServerPrerendered"  />
+
+@section scripts {-->
+<!--TODO: Add a reference to blazor.server.js-->
+<!--<script src="_framework/blazor.server.js"></script>
+}-->

@@ -52,13 +52,7 @@
         <textarea asp-for="Comment" class="form-control" rows="4" type="text"></textarea>
         <span asp-validation-for="Comment" class="text-danger"></span>
     </div>
-    <div class="form-group">
-        <label asp-for="AssignUser" class="control-label"></label>
-        @*<input asp-for="AssignUser" type="text" class="form-control" id="productName" placeholder="Digite un usuario" />*@
-        <select asp-for="AssignUser" class="form-control" asp-items="ViewBag.Username"></select>
-        <span asp-validation-for="AssignUser" class="text-danger"></span>
 
-    </div>
 
     <div class="form-group">
         <label class="control-label">Estado</label>
@@ -72,6 +66,26 @@
     </div>
 
     <div class="form-group">
+        <label class="control-label">Departamento</label>
+        <select id="departmentId" class="form-control" asp-items="@(new SelectList(ViewBag.DepartmentList,"Value","Text"))"></select>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label">AssignUser</label>
+        <select id="AssignUser" class="form-control" asp-items="@(new SelectList(string.Empty, "Value", "Text"))"></select>
+    </div>
+
+
+    <!--<div class="form-group">
+        <label class="control-label">Usuario Asignado</label>-->
+        @*<select class="form-control" id="AssignUser" name="AssignUser" asp-for="AssignUser"
+                    asp-items="@(new SelectList(string.Empty,"Username", "Username"))">
+                <option value="">--Selecccione un Usuario--</option>
+            </select>*@
+        <!--<select asp-for="AssignUser" class="form-control"></select>
+    </div>-->
+
+    <div class="form-group">
         <label asp-for="CustomerId" class="control-label"></label>
         <select asp-for="CustomerId" class="form-control" asp-items="ViewBag.CustomerId"></select>
     </div>
@@ -79,10 +93,7 @@
         <label asp-for="ApplicationId" class="control-label"></label>
         <select asp-for="ApplicationId" class="form-control" asp-items="ViewBag.ApplicationId"></select>
     </div>
-    <div class="form-group">
-        <label asp-for="DepartmentId" class="control-label"></label>
-        <select asp-for="DepartmentId" class="form-control" asp-items="ViewBag.DepartmentId"></select>
-    </div>
+
     <div class="form-group">
         <label asp-for="CauseId" class="control-label"></label>
         <select asp-for="CauseId" class="form-control" asp-items="ViewBag.CauseId"></select>
@@ -100,21 +111,31 @@
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 
-    <script>
-        $(document).ready(function () {
-            $('#productName').autocomplete({
-                source: '/api/user/search'
-            });
-        });
 
-        $(function () {
-            $('#datetimepicker1').datetimepicker();
-        });
+<script>
 
-        $(function () {
-            $('#datetimepicker2').datetimepicker();
-        });
+    $(function () {
+        $("#departmentId").change(function () {
+            $.getJSON("/Tickets/GetUsers", { departmentId: $("#departmentId").val() }, function (d) {
+                var row = "";
+                $("#AssignUser").empty();
+                $.each(d, function (i, v) {
+                    row += "<option value=" + v.value + ">" + v.text + "</option>";
+                });
+                $("#AssignUser").html(row);
+            })
+        })
+    });
+            
+    $(function () {
+        $('#datetimepicker1').datetimepicker();
+    });
 
-    </script>
+    $(function () {
+        $('#datetimepicker2').datetimepicker();
+    });
+
+
+</script>
 }
 

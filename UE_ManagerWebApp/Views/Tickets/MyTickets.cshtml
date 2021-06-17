@@ -5,6 +5,14 @@
 }
 
 <h1>Incidentes</h1>
+@if (@ViewData["TicketOnPlay"].ToString() != "")
+{
+    <h4>Estas viendo el incidente: <span class="badge bg-secondary">@ViewData["TicketOnPlay"]</span></h4>
+}
+else
+{
+    <h4>No hay ningun Ticket en Play</h4>
+}
 <a class="btn btn-warning" type="button" asp-action="Create" role="button"><i class="fas fa-plus"></i>  Nuevo Incidente</a>
 <a class="btn btn-info" type="button" asp-action="Upload" role="button"><i class="fas fa-upload"></i>  Subir Excel de Incidentes</a>
 <br />
@@ -81,6 +89,17 @@
                     {
                         <a class="btn btn-danger" type="button" asp-action="Delete" asp-route-id="@item.Id" role="button"><i class="fas fa-trash"></i></a>
                     }
+                    <a class="col-form-label">|</a>
+                    @if (@ViewData["TicketOnPlay"].ToString() == item.TicketNumber.ToString())
+                    {
+                        @*<a class="btn btn-success" onclick="playTicket(@item.Id)"><i class="fas fa-play"></i></a>*@
+                        <a class="btn btn-warning" onclick="stopTicket(@item.Id)"><i class="fas fa-stop"></i></a>
+                    }
+                    else
+                    {
+                        <a class="btn btn-success" onclick="playTicket(@item.Id)"><i class="fas fa-play"></i></a>
+                    }
+                    <input type="hidden" id="id_play_stop" value="@item.Id">
                 </td>
             </tr>
         }
@@ -107,3 +126,50 @@
    class="btn btn-dark @nextDisabled">
     <i class="fas fa-forward"></i>
 </a>
+
+@section scripts{
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script type="text/javascript" lang="en">
+
+        function stopTicket(ticket) {
+            var tic = ticket;
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("CreateStop", "TicketExecutions")",
+                data: { "id": tic },
+                dataType: "text",
+                success: function (response) {
+                    location.reload();
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        }
+
+        function playTicket(ticket) {
+            var tic = ticket;
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("CreatePlay", "TicketExecutions")",
+                data: { "id": tic },
+                dataType: "text",
+                success: function (response) {
+                    location.reload();
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+
+        }
+
+
+    </script>
+}

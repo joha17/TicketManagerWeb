@@ -34,6 +34,8 @@ namespace UE_ManagerWebApp.Models
         [Display(Name = "Nivel de Acceso")]
         public string AccessLevel { get; set; }
 
+        public string Token { get; set; }
+
         [Display(Name = "Departamento")]
         public int DepartmentId { get; set; }
         public Departments Department { get; set; }
