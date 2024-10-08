@@ -29,5 +29,5 @@ Esta es una API RESTful para la gestión de tiempos de tickets, diseñada para a
 1. Clona el repositorio:
 
    ```bash
-   git clone https://github.com/tu_usuario/ticket-time-management-api.git
-   cd ticket-time-management-api
+   git clone https://github.com/joha17/TicketManagerWeb.git
+   cd TicketManagerWeb
